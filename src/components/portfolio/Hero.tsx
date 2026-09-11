@@ -1,125 +1,158 @@
+import { motion } from "motion/react";
+
+import { AnimatedText, ScrambleText } from "@/components/motion/AnimatedText";
+import { Magnetic } from "@/components/motion/Magnetic";
+import { Parallax } from "@/components/motion/Parallax";
+import { PendulumCard } from "@/components/motion/PendulumCard";
 import { BoltIcon, GithubIcon, InstagramIcon, LinkedinIcon, RobotIcon } from "./icons";
 
 function IdCard() {
   return (
-    <div className="mt-12 relative w-full flex flex-col items-center justify-center reveal" style={{ "--delay": "0.4s" } as React.CSSProperties}>
+    <div className="mt-12 relative w-full flex flex-col items-center justify-center">
       <div className="text-center mb-6">
         <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-accent bg-accent/10 border border-accent/30 px-3 py-1 rounded-full">
-          ✦ Interactive Physics • Hover to Rotate ✦
+          ✦ <ScrambleText text="DRAG THE CARD — REAL PENDULUM PHYSICS" /> ✦
         </span>
       </div>
 
-      <div className="flex flex-col items-center">
-        <div className="w-px h-16 bg-linear-to-b from-transparent to-border-strong" />
-        <div className="w-6 h-6 rounded-full border-2 border-border-strong -mt-1 bg-surface" />
-        <div className="animate-card-swing group">
-          <div className="mt-2 w-[260px] sm:w-[300px] rounded-2xl border border-border-strong bg-surface/90 backdrop-blur-md p-5 shadow-2xl transition-transform duration-500 group-hover:scale-[1.03] group-hover:-rotate-1">
-            <div className="flex items-center justify-between font-mono text-[9px] uppercase tracking-[0.2em] text-subtle">
-              <span>Dev ID</span>
-              <span className="text-emerald">Active</span>
+      <PendulumCard>
+        <div className="w-[260px] sm:w-[300px] rounded-2xl border border-border-strong bg-surface/90 backdrop-blur-md p-5 shadow-2xl transition-transform duration-500 hover:scale-[1.03]">
+          <div className="flex items-center justify-between font-mono text-[9px] uppercase tracking-[0.2em] text-subtle">
+            <span>Dev ID</span>
+            <span className="text-emerald">Active</span>
+          </div>
+          <div className="mt-4 h-32 rounded-xl ambient-field border border-border flex items-center justify-center">
+            <RobotIcon className="w-14 h-14 text-amber" />
+          </div>
+          <p className="mt-4 text-lg font-extrabold tracking-tight">Syahril Arfian Almazril</p>
+          <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground mt-1">
+            AI • Data • Software
+          </p>
+          <div className="mt-4 flex items-center justify-between">
+            <div className="flex gap-1">
+              {Array.from({ length: 14 }).map((_, i) => (
+                <span
+                  key={i}
+                  className="block w-[2px] bg-foreground/70"
+                  style={{ height: `${10 + ((i * 7) % 14)}px` }}
+                />
+              ))}
             </div>
-            <div className="mt-4 h-32 rounded-xl ambient-field border border-border flex items-center justify-center">
-              <RobotIcon className="w-14 h-14 text-amber" />
-            </div>
-            <p className="mt-4 text-lg font-extrabold tracking-tight">Syahril Arfian Almazril</p>
-            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground mt-1">
-              AI • Data • Software
-            </p>
-            <div className="mt-4 flex items-center justify-between">
-              <div className="flex gap-1">
-                {Array.from({ length: 14 }).map((_, i) => (
-                  <span
-                    key={i}
-                    className="block w-[2px] bg-foreground/70"
-                    style={{ height: `${10 + ((i * 7) % 14)}px` }}
-                  />
-                ))}
-              </div>
-              <span className="font-signature text-2xl text-muted-foreground">Azril</span>
-            </div>
+            <span className="font-signature text-2xl text-muted-foreground">Azril</span>
           </div>
         </div>
-      </div>
+      </PendulumCard>
     </div>
   );
 }
+
 
 export function Hero() {
   return (
     <section id="hero" className="relative pt-12 pb-20 px-6 md:px-12 lg:px-20 overflow-hidden hero-glow">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start pt-6 reveal">
-          <p className="md:col-span-4 text-xs font-mono tracking-widest text-muted-foreground leading-relaxed uppercase">
-            Hi, I'm Syahril Arfian Almazril.
-            <br />
-            I build scalable systems
-            <br />
-            powered by intelligence.
-          </p>
+          <AnimatedText
+            as="p"
+            split="lines"
+            text={"Hi, I'm Syahril Arfian Almazril.\nI build scalable systems\npowered by intelligence."}
+            stagger={0.12}
+            className="md:col-span-4 text-xs font-mono tracking-widest text-muted-foreground leading-relaxed uppercase"
+          />
           <div className="md:col-span-8 flex justify-end">
-            <a
-              href="https://github.com"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="GitHub"
-              className="text-muted-foreground hover:text-foreground transition p-2 hover:bg-surface rounded-full hover:scale-110 active:scale-95"
-            >
-              <GithubIcon className="w-7 h-7" />
-            </a>
+            <Magnetic strength={0.6}>
+              <a
+                href="https://github.com"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="GitHub"
+                className="block text-muted-foreground hover:text-foreground transition p-2 hover:bg-surface rounded-full hover:scale-110 active:scale-95"
+              >
+                <GithubIcon className="w-7 h-7" />
+              </a>
+            </Magnetic>
           </div>
         </div>
+
 
         <h1 className="sr-only">Syahril Arfian Almazril — AI, Data and Software Engineer</h1>
 
-        <div className="mt-4 select-none" aria-hidden="true">
-          <div className="flex justify-end reveal" style={{ "--delay": "0.1s" } as React.CSSProperties}>
-            <span className="hero-title text-metallic">AI &amp; DATA</span>
+        <Parallax speed={0.06} className="mt-4 select-none" aria-hidden="true">
+          <div className="flex justify-end">
+            <AnimatedText text="AI & DATA" split="chars" stagger={0.045} className="hero-title text-metallic" />
           </div>
 
-          <div
-            className="flex items-center justify-start relative -mt-2 md:-mt-4 reveal"
-            style={{ "--delay": "0.2s" } as React.CSSProperties}
-          >
-            <a
-              href="https://linkedin.com"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="LinkedIn"
-              className="absolute -top-6 left-2 text-muted-foreground hover:text-foreground transition hover:scale-125"
-            >
-              <LinkedinIcon className="w-6 h-6" />
-            </a>
+          <div className="flex items-center justify-start relative -mt-2 md:-mt-4">
+            <Magnetic strength={0.8}>
+              <a
+                href="https://linkedin.com"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="LinkedIn"
+                className="absolute -top-6 left-2 text-muted-foreground hover:text-foreground transition hover:scale-125"
+              >
+                <LinkedinIcon className="w-6 h-6" />
+              </a>
+            </Magnetic>
             <div className="flex items-center flex-wrap">
-              <span className="hero-title text-metallic mr-2 md:mr-4">SOFT</span>
-              <span className="inline-flex items-center px-2 animate-subtle-pulse">
-                <BoltIcon className="w-12 h-16 md:w-24 md:h-32 text-accent drop-shadow-[0_0_25px_rgba(56,189,248,0.6)] transition-transform hover:rotate-12 duration-300" />
-              </span>
-              <span className="hero-title text-metallic">WARE</span>
+              <AnimatedText
+                text="SOFT"
+                split="chars"
+                delay={0.15}
+                stagger={0.045}
+                className="hero-title text-metallic mr-2 md:mr-4"
+              />
+              <motion.span
+                className="inline-flex items-center px-2"
+                animate={{ scale: [1, 1.12, 1], rotate: [0, 6, 0] }}
+                transition={{ duration: 3.6, repeat: Infinity, ease: "easeInOut" }}
+                whileHover={{ rotate: 18, scale: 1.2 }}
+              >
+                <BoltIcon className="w-12 h-16 md:w-24 md:h-32 text-accent drop-shadow-[0_0_25px_rgba(56,189,248,0.6)]" />
+              </motion.span>
+              <AnimatedText
+                text="WARE"
+                split="chars"
+                delay={0.3}
+                stagger={0.045}
+                className="hero-title text-metallic"
+              />
             </div>
           </div>
 
-          <div
-            className="flex items-center justify-start -mt-2 md:-mt-4 flex-wrap relative reveal"
-            style={{ "--delay": "0.3s" } as React.CSSProperties}
-          >
-            <span className="hero-title text-metallic">EN</span>
+          <div className="flex items-center justify-start -mt-2 md:-mt-4 flex-wrap relative">
+            <AnimatedText text="EN" split="chars" delay={0.35} stagger={0.045} className="hero-title text-metallic" />
             <span className="mx-2 md:mx-4 inline-flex items-center">
-              <span className="border-[5px] md:border-[7px] border-amber bg-amber/10 p-2 md:p-3 rounded-2xl md:rounded-3xl shadow-[0_0_35px_rgba(245,158,11,0.35)] transition-transform hover:scale-110 duration-300 inline-flex">
+              <motion.span
+                className="border-[5px] md:border-[7px] border-amber bg-amber/10 p-2 md:p-3 rounded-2xl md:rounded-3xl shadow-[0_0_35px_rgba(245,158,11,0.35)] inline-flex"
+                animate={{ y: [0, -10, 0] }}
+                transition={{ duration: 4.2, repeat: Infinity, ease: "easeInOut" }}
+                whileHover={{ scale: 1.14, rotate: -8 }}
+              >
                 <RobotIcon className="w-10 h-10 md:w-16 md:h-16 text-amber" />
-              </span>
+              </motion.span>
             </span>
-            <span className="hero-title text-metallic">GINEER</span>
-            <a
-              href="https://instagram.com"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="Instagram"
-              className="inline-block ml-4 mb-8 text-subtle hover:text-foreground transition hover:scale-125"
-            >
-              <InstagramIcon className="w-7 h-7" />
-            </a>
+            <AnimatedText
+              text="GINEER"
+              split="chars"
+              delay={0.45}
+              stagger={0.045}
+              className="hero-title text-metallic"
+            />
+            <Magnetic strength={0.8}>
+              <a
+                href="https://instagram.com"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Instagram"
+                className="inline-block ml-4 mb-8 text-subtle hover:text-foreground transition hover:scale-125"
+              >
+                <InstagramIcon className="w-7 h-7" />
+              </a>
+            </Magnetic>
           </div>
-        </div>
+        </Parallax>
+
 
         <div className="mt-8 flex justify-end reveal" style={{ "--delay": "0.35s" } as React.CSSProperties}>
           <p className="max-w-xs text-right font-mono text-[11px] tracking-widest text-muted-foreground leading-relaxed uppercase">
