@@ -1,48 +1,51 @@
+import { motion } from "motion/react";
+
+import { AnimatedText, ScrambleText } from "@/components/motion/AnimatedText";
+import { Magnetic } from "@/components/motion/Magnetic";
+import { Parallax } from "@/components/motion/Parallax";
+import { PendulumCard } from "@/components/motion/PendulumCard";
 import { BoltIcon, GithubIcon, InstagramIcon, LinkedinIcon, RobotIcon } from "./icons";
 
 function IdCard() {
   return (
-    <div className="mt-12 relative w-full flex flex-col items-center justify-center reveal" style={{ "--delay": "0.4s" } as React.CSSProperties}>
+    <div className="mt-12 relative w-full flex flex-col items-center justify-center">
       <div className="text-center mb-6">
         <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-accent bg-accent/10 border border-accent/30 px-3 py-1 rounded-full">
-          ✦ Interactive Physics • Hover to Rotate ✦
+          ✦ <ScrambleText text="DRAG THE CARD — REAL PENDULUM PHYSICS" /> ✦
         </span>
       </div>
 
-      <div className="flex flex-col items-center">
-        <div className="w-px h-16 bg-linear-to-b from-transparent to-border-strong" />
-        <div className="w-6 h-6 rounded-full border-2 border-border-strong -mt-1 bg-surface" />
-        <div className="animate-card-swing group">
-          <div className="mt-2 w-[260px] sm:w-[300px] rounded-2xl border border-border-strong bg-surface/90 backdrop-blur-md p-5 shadow-2xl transition-transform duration-500 group-hover:scale-[1.03] group-hover:-rotate-1">
-            <div className="flex items-center justify-between font-mono text-[9px] uppercase tracking-[0.2em] text-subtle">
-              <span>Dev ID</span>
-              <span className="text-emerald">Active</span>
+      <PendulumCard>
+        <div className="w-[260px] sm:w-[300px] rounded-2xl border border-border-strong bg-surface/90 backdrop-blur-md p-5 shadow-2xl transition-transform duration-500 hover:scale-[1.03]">
+          <div className="flex items-center justify-between font-mono text-[9px] uppercase tracking-[0.2em] text-subtle">
+            <span>Dev ID</span>
+            <span className="text-emerald">Active</span>
+          </div>
+          <div className="mt-4 h-32 rounded-xl ambient-field border border-border flex items-center justify-center">
+            <RobotIcon className="w-14 h-14 text-amber" />
+          </div>
+          <p className="mt-4 text-lg font-extrabold tracking-tight">Syahril Arfian Almazril</p>
+          <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground mt-1">
+            AI • Data • Software
+          </p>
+          <div className="mt-4 flex items-center justify-between">
+            <div className="flex gap-1">
+              {Array.from({ length: 14 }).map((_, i) => (
+                <span
+                  key={i}
+                  className="block w-[2px] bg-foreground/70"
+                  style={{ height: `${10 + ((i * 7) % 14)}px` }}
+                />
+              ))}
             </div>
-            <div className="mt-4 h-32 rounded-xl ambient-field border border-border flex items-center justify-center">
-              <RobotIcon className="w-14 h-14 text-amber" />
-            </div>
-            <p className="mt-4 text-lg font-extrabold tracking-tight">Syahril Arfian Almazril</p>
-            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground mt-1">
-              AI • Data • Software
-            </p>
-            <div className="mt-4 flex items-center justify-between">
-              <div className="flex gap-1">
-                {Array.from({ length: 14 }).map((_, i) => (
-                  <span
-                    key={i}
-                    className="block w-[2px] bg-foreground/70"
-                    style={{ height: `${10 + ((i * 7) % 14)}px` }}
-                  />
-                ))}
-              </div>
-              <span className="font-signature text-2xl text-muted-foreground">Azril</span>
-            </div>
+            <span className="font-signature text-2xl text-muted-foreground">Azril</span>
           </div>
         </div>
-      </div>
+      </PendulumCard>
     </div>
   );
 }
+
 
 export function Hero() {
   return (
