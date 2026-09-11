@@ -77,10 +77,11 @@ export function Disciplines() {
           return (
             <div key={d.title.join(" ")} className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center reveal">
               <div
-                className={`lg:col-span-6 flex justify-center ${cubeFirst ? "order-2 lg:order-1" : "order-2"}`}
+                className={`lg:col-span-6 flex justify-center py-10 ${cubeFirst ? "order-2 lg:order-1" : "order-2"}`}
               >
-                <Cube faces={d.faces} labels={d.labels} />
+                <Cube3D faces={d.faces} />
               </div>
+
               <div className={`lg:col-span-6 ${cubeFirst ? "order-1 lg:order-2" : "order-1"}`}>
                 <h2
                   className={`text-4xl sm:text-6xl font-black tracking-tight uppercase leading-none mb-6 transition-colors ${toneTitle[d.tone]}`}
