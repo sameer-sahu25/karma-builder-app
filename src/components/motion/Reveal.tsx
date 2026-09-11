@@ -1,9 +1,9 @@
 import type { ReactNode } from "react";
-import { motion, type Variants } from "motion/react";
+import { motion, type TargetAndTransition, type Variants } from "motion/react";
 
 type Kind = "fade" | "up" | "down" | "left" | "right" | "scale" | "rotate" | "blur";
 
-const hidden: Record<Kind, Record<string, unknown>> = {
+const hidden: Record<Kind, TargetAndTransition> = {
   fade: { opacity: 0 },
   up: { opacity: 0, y: 48 },
   down: { opacity: 0, y: -48 },
@@ -14,7 +14,7 @@ const hidden: Record<Kind, Record<string, unknown>> = {
   blur: { opacity: 0, filter: "blur(14px)", y: 24 },
 };
 
-const shown: Record<Kind, Record<string, unknown>> = {
+const shown: Record<Kind, TargetAndTransition> = {
   fade: { opacity: 1 },
   up: { opacity: 1, y: 0 },
   down: { opacity: 1, y: 0 },
