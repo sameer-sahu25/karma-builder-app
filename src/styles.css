@@ -340,7 +340,9 @@
   .animate-marquee-right,
   .animate-card-swing,
   .animate-float-slow,
+  .cube-3d,
   .animate-subtle-pulse {
     animation: none;
   }
+
 }
