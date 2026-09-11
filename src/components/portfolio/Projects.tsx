@@ -109,44 +109,51 @@ export function Projects() {
           <span className="font-mono text-xs text-subtle">2024 — 2026</span>
         </div>
 
-        <div className="space-y-12">
-          {projects.map((p, i) => (
-            <article
-              key={p.title}
-              className="interactive-card bg-invert text-invert-foreground rounded-sm p-6 sm:p-10 shadow-2xl hover:-translate-y-1 reveal"
-              style={{ "--delay": `${0.1 * (i + 1)}s` } as React.CSSProperties}
-            >
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-                <div className="lg:col-span-4 flex flex-col justify-between self-stretch">
-                  <div>
-                    <span className="font-mono text-sm font-bold tracking-widest">{p.index}</span>
-                    <p className="font-mono text-[11px] font-bold tracking-[0.2em] text-zinc-500 uppercase mt-8 mb-4">
-                      {p.category}
-                    </p>
-                  </div>
-                  <p className="font-mono text-xs text-zinc-600 tracking-wide">{p.blurb}</p>
-                </div>
+        <Stagger className="space-y-12" stagger={0.14}>
+          {projects.map((p) => (
+            <StaggerItem key={p.title}>
+              <TiltCard max={6} lift={18}>
+                <article className="interactive-card bg-invert text-invert-foreground rounded-sm p-6 sm:p-10 shadow-2xl group">
+                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                    <div className="lg:col-span-4 flex flex-col justify-between self-stretch">
+                      <div>
+                        <span className="font-mono text-sm font-bold tracking-widest">{p.index}</span>
+                        <p className="font-mono text-[11px] font-bold tracking-[0.2em] text-zinc-500 uppercase mt-8 mb-4">
+                          {p.category}
+                        </p>
+                      </div>
+                      <p className="font-mono text-xs text-zinc-600 tracking-wide">{p.blurb}</p>
+                    </div>
 
-                <div className="lg:col-span-4">{p.visual}</div>
+                    <div className="lg:col-span-4 transition-transform duration-500 group-hover:scale-[1.06]">
+                      {p.visual}
+                    </div>
 
-                <div className="lg:col-span-4 flex flex-col justify-between self-stretch text-left lg:text-right">
-                  <h3 className={`text-2xl sm:text-3xl font-bold tracking-tight uppercase leading-tight transition-colors ${p.hover}`}>
-                    {p.title}
-                  </h3>
-                  <div className="mt-6 lg:mt-0 flex items-center justify-between lg:justify-end lg:space-x-8">
-                    <span className="font-mono text-xs text-zinc-500">{p.year}</span>
-                    <a
-                      href="#focus"
-                      className="font-mono text-xs font-bold uppercase tracking-wider hover:opacity-70 transition border-b border-current pb-0.5"
-                    >
-                      View More
-                    </a>
+                    <div className="lg:col-span-4 flex flex-col justify-between self-stretch text-left lg:text-right">
+                      <h3
+                        className={`text-2xl sm:text-3xl font-bold tracking-tight uppercase leading-tight transition-colors ${p.hover}`}
+                      >
+                        {p.title}
+                      </h3>
+                      <div className="mt-6 lg:mt-0 flex items-center justify-between lg:justify-end lg:space-x-8">
+                        <span className="font-mono text-xs text-zinc-500">{p.year}</span>
+                        <Magnetic strength={0.5}>
+                          <a
+                            href="#focus"
+                            className="font-mono text-xs font-bold uppercase tracking-wider hover:opacity-70 transition border-b border-current pb-0.5 inline-block"
+                          >
+                            View More
+                          </a>
+                        </Magnetic>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-            </article>
+                </article>
+              </TiltCard>
+            </StaggerItem>
           ))}
-        </div>
+        </Stagger>
+
 
         <div className="mt-16 flex flex-wrap gap-4 items-center justify-between pt-6 border-t border-border reveal">
           <div className="flex items-center space-x-4">
