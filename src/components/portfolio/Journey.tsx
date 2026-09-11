@@ -62,12 +62,12 @@ export function Journey() {
       <div className="sticky top-0 h-screen overflow-hidden flex flex-col justify-center">
         <div className="px-6 md:px-12 lg:px-20 max-w-7xl mx-auto w-full">
           <AnimatedText
-            as="h2"
-            text="Professional Journey"
-            split="chars"
-            stagger={0.025}
-            className="hero-title text-metallic block text-4xl sm:text-6xl md:text-7xl"
-          />
+      as="h2"
+      text="Professional Journey"
+      split="chars"
+      stagger={0.025}
+      className="hero-title block text-4xl sm:text-6xl md:text-7xl"
+      itemClassName="text-metallic" />
           <Reveal kind="up" delay={0.15}>
             <p className="mt-4 max-w-md text-sm text-muted-foreground leading-relaxed">
               A timeline of roles, responsibilities, and professional growth across various organizations.

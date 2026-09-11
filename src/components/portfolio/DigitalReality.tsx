@@ -57,12 +57,12 @@ export function DigitalReality() {
     <section id="reality" className="relative py-28 px-6 md:px-12 lg:px-20 overflow-hidden">
       <div className="max-w-5xl mx-auto text-center">
         <AnimatedText
-          as="h2"
-          text="ARCHITECTING"
-          split="chars"
-          stagger={0.035}
-          className="block text-5xl sm:text-7xl md:text-8xl font-black tracking-tight text-metallic"
-        />
+     as="h2"
+     text="ARCHITECTING"
+     split="chars"
+     stagger={0.035}
+     className="block text-5xl sm:text-7xl md:text-8xl font-black tracking-tight "
+     itemClassName="text-metallic" />
         <AnimatedText
           as="p"
           text="digital reality."

@@ -79,7 +79,7 @@ export function Hero() {
 
         <Parallax speed={0.06} className="mt-4 select-none" aria-hidden="true">
           <div className="flex justify-end">
-            <AnimatedText text="AI & DATA" split="chars" stagger={0.045} className="hero-title text-metallic" />
+            <AnimatedText text="AI & DATA" split="chars" stagger={0.045} className="hero-title "  itemClassName="text-metallic" />
           </div>
 
           <div className="flex items-center justify-start relative -mt-2 md:-mt-4">
@@ -96,12 +96,12 @@ export function Hero() {
             </Magnetic>
             <div className="flex items-center flex-wrap">
               <AnimatedText
-                text="SOFT"
-                split="chars"
-                delay={0.15}
-                stagger={0.045}
-                className="hero-title text-metallic mr-2 md:mr-4"
-              />
+        text="SOFT"
+        split="chars"
+        delay={0.15}
+        stagger={0.045}
+        className="hero-title mr-2 md:mr-4"
+        itemClassName="text-metallic" />
               <motion.span
                 className="inline-flex items-center px-2"
                 animate={{ scale: [1, 1.12, 1], rotate: [0, 6, 0] }}
@@ -111,17 +111,17 @@ export function Hero() {
                 <BoltIcon className="w-12 h-16 md:w-24 md:h-32 text-accent drop-shadow-[0_0_25px_rgba(56,189,248,0.6)]" />
               </motion.span>
               <AnimatedText
-                text="WARE"
-                split="chars"
-                delay={0.3}
-                stagger={0.045}
-                className="hero-title text-metallic"
-              />
+        text="WARE"
+        split="chars"
+        delay={0.3}
+        stagger={0.045}
+        className="hero-title "
+        itemClassName="text-metallic" />
             </div>
           </div>
 
           <div className="flex items-center justify-start -mt-2 md:-mt-4 flex-wrap relative">
-            <AnimatedText text="EN" split="chars" delay={0.35} stagger={0.045} className="hero-title text-metallic" />
+            <AnimatedText text="EN" split="chars" delay={0.35} stagger={0.045} className="hero-title "  itemClassName="text-metallic" />
             <span className="mx-2 md:mx-4 inline-flex items-center">
               <motion.span
                 className="border-[5px] md:border-[7px] border-amber bg-amber/10 p-2 md:p-3 rounded-2xl md:rounded-3xl shadow-[0_0_35px_rgba(245,158,11,0.35)] inline-flex"
@@ -133,12 +133,12 @@ export function Hero() {
               </motion.span>
             </span>
             <AnimatedText
-              text="GINEER"
-              split="chars"
-              delay={0.45}
-              stagger={0.045}
-              className="hero-title text-metallic"
-            />
+       text="GINEER"
+       split="chars"
+       delay={0.45}
+       stagger={0.045}
+       className="hero-title "
+       itemClassName="text-metallic" />
             <Magnetic strength={0.8}>
               <a
                 href="https://instagram.com"

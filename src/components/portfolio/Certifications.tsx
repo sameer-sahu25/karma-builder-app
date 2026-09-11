@@ -31,12 +31,12 @@ export function Certifications() {
         </Reveal>
 
         <AnimatedText
-          as="h2"
-          text="Validating Excellence through Global Standards."
-          split="words"
-          stagger={0.05}
-          className="mt-6 block text-3xl sm:text-5xl md:text-6xl font-black tracking-tight leading-[1.05] text-metallic"
-        />
+     as="h2"
+     text="Validating Excellence through Global Standards."
+     split="words"
+     stagger={0.05}
+     className="mt-6 block text-3xl sm:text-5xl md:text-6xl font-black tracking-tight leading-[1.05] "
+     itemClassName="text-metallic" />
 
         <Reveal kind="up" delay={0.2}>
           <p className="mt-6 max-w-2xl mx-auto text-sm text-muted-foreground leading-relaxed">
