@@ -77,55 +77,82 @@ export function Hero() {
 
         <h1 className="sr-only">Syahril Arfian Almazril — AI, Data and Software Engineer</h1>
 
-        <div className="mt-4 select-none" aria-hidden="true">
-          <div className="flex justify-end reveal" style={{ "--delay": "0.1s" } as React.CSSProperties}>
-            <span className="hero-title text-metallic">AI &amp; DATA</span>
+        <Parallax speed={0.06} className="mt-4 select-none" aria-hidden="true">
+          <div className="flex justify-end">
+            <AnimatedText text="AI & DATA" split="chars" stagger={0.045} className="hero-title text-metallic" />
           </div>
 
-          <div
-            className="flex items-center justify-start relative -mt-2 md:-mt-4 reveal"
-            style={{ "--delay": "0.2s" } as React.CSSProperties}
-          >
-            <a
-              href="https://linkedin.com"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="LinkedIn"
-              className="absolute -top-6 left-2 text-muted-foreground hover:text-foreground transition hover:scale-125"
-            >
-              <LinkedinIcon className="w-6 h-6" />
-            </a>
+          <div className="flex items-center justify-start relative -mt-2 md:-mt-4">
+            <Magnetic strength={0.8}>
+              <a
+                href="https://linkedin.com"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="LinkedIn"
+                className="absolute -top-6 left-2 text-muted-foreground hover:text-foreground transition hover:scale-125"
+              >
+                <LinkedinIcon className="w-6 h-6" />
+              </a>
+            </Magnetic>
             <div className="flex items-center flex-wrap">
-              <span className="hero-title text-metallic mr-2 md:mr-4">SOFT</span>
-              <span className="inline-flex items-center px-2 animate-subtle-pulse">
-                <BoltIcon className="w-12 h-16 md:w-24 md:h-32 text-accent drop-shadow-[0_0_25px_rgba(56,189,248,0.6)] transition-transform hover:rotate-12 duration-300" />
-              </span>
-              <span className="hero-title text-metallic">WARE</span>
+              <AnimatedText
+                text="SOFT"
+                split="chars"
+                delay={0.15}
+                stagger={0.045}
+                className="hero-title text-metallic mr-2 md:mr-4"
+              />
+              <motion.span
+                className="inline-flex items-center px-2"
+                animate={{ scale: [1, 1.12, 1], rotate: [0, 6, 0] }}
+                transition={{ duration: 3.6, repeat: Infinity, ease: "easeInOut" }}
+                whileHover={{ rotate: 18, scale: 1.2 }}
+              >
+                <BoltIcon className="w-12 h-16 md:w-24 md:h-32 text-accent drop-shadow-[0_0_25px_rgba(56,189,248,0.6)]" />
+              </motion.span>
+              <AnimatedText
+                text="WARE"
+                split="chars"
+                delay={0.3}
+                stagger={0.045}
+                className="hero-title text-metallic"
+              />
             </div>
           </div>
 
-          <div
-            className="flex items-center justify-start -mt-2 md:-mt-4 flex-wrap relative reveal"
-            style={{ "--delay": "0.3s" } as React.CSSProperties}
-          >
-            <span className="hero-title text-metallic">EN</span>
+          <div className="flex items-center justify-start -mt-2 md:-mt-4 flex-wrap relative">
+            <AnimatedText text="EN" split="chars" delay={0.35} stagger={0.045} className="hero-title text-metallic" />
             <span className="mx-2 md:mx-4 inline-flex items-center">
-              <span className="border-[5px] md:border-[7px] border-amber bg-amber/10 p-2 md:p-3 rounded-2xl md:rounded-3xl shadow-[0_0_35px_rgba(245,158,11,0.35)] transition-transform hover:scale-110 duration-300 inline-flex">
+              <motion.span
+                className="border-[5px] md:border-[7px] border-amber bg-amber/10 p-2 md:p-3 rounded-2xl md:rounded-3xl shadow-[0_0_35px_rgba(245,158,11,0.35)] inline-flex"
+                animate={{ y: [0, -10, 0] }}
+                transition={{ duration: 4.2, repeat: Infinity, ease: "easeInOut" }}
+                whileHover={{ scale: 1.14, rotate: -8 }}
+              >
                 <RobotIcon className="w-10 h-10 md:w-16 md:h-16 text-amber" />
-              </span>
+              </motion.span>
             </span>
-            <span className="hero-title text-metallic">GINEER</span>
-            <a
-              href="https://instagram.com"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="Instagram"
-              className="inline-block ml-4 mb-8 text-subtle hover:text-foreground transition hover:scale-125"
-            >
-              <InstagramIcon className="w-7 h-7" />
-            </a>
+            <AnimatedText
+              text="GINEER"
+              split="chars"
+              delay={0.45}
+              stagger={0.045}
+              className="hero-title text-metallic"
+            />
+            <Magnetic strength={0.8}>
+              <a
+                href="https://instagram.com"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Instagram"
+                className="inline-block ml-4 mb-8 text-subtle hover:text-foreground transition hover:scale-125"
+              >
+                <InstagramIcon className="w-7 h-7" />
+              </a>
+            </Magnetic>
           </div>
-        </div>
+        </Parallax>
+
 
         <div className="mt-8 flex justify-end reveal" style={{ "--delay": "0.35s" } as React.CSSProperties}>
           <p className="max-w-xs text-right font-mono text-[11px] tracking-widest text-muted-foreground leading-relaxed uppercase">
