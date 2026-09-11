@@ -256,7 +256,59 @@
   animation: card-swing 6s ease-in-out infinite;
 }
 
+/* ---------- 3D cube ---------- */
+
+.cube-stage {
+  perspective: 1100px;
+  perspective-origin: 50% 45%;
+}
+
+.cube-3d {
+  position: relative;
+  transform-style: preserve-3d;
+  animation: cube-spin 22s linear infinite;
+  will-change: transform;
+}
+
+.cube-stage[data-dragging="true"] .cube-3d,
+.cube-stage:hover .cube-3d {
+  animation-play-state: paused;
+}
+
+.cube-face {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.45);
+  backface-visibility: hidden;
+  overflow: hidden;
+}
+
+.cube-face::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.05) 0 2px,
+    transparent 2px 9px
+  );
+  pointer-events: none;
+}
+
+@keyframes cube-spin {
+  from {
+    transform: rotateX(-22deg) rotateY(0deg);
+  }
+  to {
+    transform: rotateX(-22deg) rotateY(360deg);
+  }
+}
+
 /* ---------- Scroll reveal ---------- */
+
 
 .reveal {
   opacity: 0;
@@ -288,7 +340,9 @@
   .animate-marquee-right,
   .animate-card-swing,
   .animate-float-slow,
+  .cube-3d,
   .animate-subtle-pulse {
     animation: none;
   }
+
 }
