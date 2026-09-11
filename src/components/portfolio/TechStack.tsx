@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Reorder } from "motion/react";
 
 type Pill = { name: string; mark: React.ReactNode };
 
@@ -93,40 +94,34 @@ const rowTwo: Pill[] = [
 ];
 
 function PillRow({ pills, className }: { pills: Pill[]; className?: string }) {
-  const [order, setOrder] = useState(pills.map((_, i) => i));
-  const [dragged, setDragged] = useState<number | null>(null);
-
-  const drop = (target: number) => {
-    if (dragged === null || dragged === target) return;
-    setOrder((prev) => {
-      const next = [...prev];
-      const from = next.indexOf(dragged);
-      const to = next.indexOf(target);
-      next.splice(to, 0, next.splice(from, 1)[0]!);
-      return next;
-    });
-    setDragged(null);
-  };
+  const [items, setItems] = useState(pills);
 
   return (
-    <div className={`grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 items-center ${className ?? ""}`}>
-      {order.map((idx) => {
-        const pill = pills[idx]!;
-        return (
-          <div
-            key={pill.name}
-            draggable
-            onDragStart={() => setDragged(idx)}
-            onDragOver={(e) => e.preventDefault()}
-            onDrop={() => drop(idx)}
-            className="cursor-grab active:cursor-grabbing flex items-center space-x-2.5 p-2 rounded-xl bg-surface-2/70 border border-border hover:border-border-strong transition"
-          >
-            {pill.mark}
-            <span className="text-sm font-semibold tracking-tight text-foreground/85">{pill.name}</span>
-          </div>
-        );
-      })}
-    </div>
+    <Reorder.Group
+      axis="x"
+      values={items}
+      onReorder={setItems}
+      as="div"
+      className={`flex flex-wrap gap-4 items-center ${className ?? ""}`}
+    >
+      {items.map((pill) => (
+        <Reorder.Item
+          key={pill.name}
+          value={pill}
+          as="div"
+          drag
+          dragElastic={0.25}
+          dragMomentum={false}
+          whileDrag={{ scale: 1.08, zIndex: 20, cursor: "grabbing" }}
+          whileHover={{ y: -2 }}
+          transition={{ type: "spring", stiffness: 500, damping: 34 }}
+          className="cursor-grab active:cursor-grabbing touch-none select-none flex items-center space-x-2.5 p-2 rounded-xl bg-surface-2/70 border border-border hover:border-border-strong transition-colors"
+        >
+          {pill.mark}
+          <span className="text-sm font-semibold tracking-tight text-foreground/85">{pill.name}</span>
+        </Reorder.Item>
+      ))}
+    </Reorder.Group>
   );
 }
 
