@@ -2,6 +2,10 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 
 import { useReveal } from "@/hooks/use-reveal";
+import { SmoothScroll } from "@/components/motion/SmoothScroll";
+import { Preloader } from "@/components/motion/Preloader";
+import { CustomCursor } from "@/components/motion/CustomCursor";
+import { ShaderBackground } from "@/components/motion/ShaderBackground";
 import { SiteNav } from "@/components/portfolio/SiteNav";
 import { Hero } from "@/components/portfolio/Hero";
 import { CoreFocus } from "@/components/portfolio/CoreFocus";
@@ -9,9 +13,14 @@ import { Stats } from "@/components/portfolio/Stats";
 import { TechStack } from "@/components/portfolio/TechStack";
 import { Disciplines } from "@/components/portfolio/Disciplines";
 import { Projects } from "@/components/portfolio/Projects";
+import { Journey } from "@/components/portfolio/Journey";
+import { Certifications } from "@/components/portfolio/Certifications";
+import { GithubEcosystem } from "@/components/portfolio/GithubEcosystem";
+import { DigitalReality } from "@/components/portfolio/DigitalReality";
 import { Marquee } from "@/components/portfolio/Marquee";
 import { CallToAction } from "@/components/portfolio/CallToAction";
 import { SiteFooter } from "@/components/portfolio/SiteFooter";
+
 
 const title = "Syahril Arfian Almazril — AI & Data Software Engineer";
 const description =
