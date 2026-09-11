@@ -67,10 +67,14 @@ function Index() {
 
   return (
     <div className="relative min-h-screen bg-background text-foreground selection:bg-invert selection:text-invert-foreground">
+      <SmoothScroll />
+      <Preloader />
+      <CustomCursor />
       <ScrollProgress />
 
-      <div className="fixed inset-0 -z-10 pointer-events-none ambient-field opacity-70" aria-hidden="true" />
-      <div className="fixed inset-0 -z-10 pointer-events-none grid-field opacity-60" aria-hidden="true" />
+      <ShaderBackground className="fixed inset-0 -z-20 pointer-events-none w-full h-full opacity-70" />
+      <div className="fixed inset-0 -z-10 pointer-events-none ambient-field opacity-50" aria-hidden="true" />
+      <div className="fixed inset-0 -z-10 pointer-events-none grid-field opacity-50" aria-hidden="true" />
 
       <aside className="fixed left-0 top-1/2 -translate-y-1/2 z-40 hidden lg:flex items-center" aria-hidden="true">
         <div className="bg-invert text-invert-foreground text-[10px] font-bold tracking-[0.22em] uppercase py-5 px-2 rounded-r-2xl shadow-2xl vertical-badge select-none transition-all duration-300 hover:pl-3">
@@ -86,12 +90,17 @@ function Index() {
         <Stats />
         <TechStack />
         <Disciplines />
+        <DigitalReality />
         <Projects />
+        <Journey />
+        <Certifications />
+        <GithubEcosystem />
       </main>
 
       <Marquee />
       <CallToAction />
       <SiteFooter />
+
     </div>
   );
 }
