@@ -52,25 +52,28 @@ export function Hero() {
     <section id="hero" className="relative pt-12 pb-20 px-6 md:px-12 lg:px-20 overflow-hidden hero-glow">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start pt-6 reveal">
-          <p className="md:col-span-4 text-xs font-mono tracking-widest text-muted-foreground leading-relaxed uppercase">
-            Hi, I'm Syahril Arfian Almazril.
-            <br />
-            I build scalable systems
-            <br />
-            powered by intelligence.
-          </p>
+          <AnimatedText
+            as="p"
+            split="lines"
+            text={"Hi, I'm Syahril Arfian Almazril.\nI build scalable systems\npowered by intelligence."}
+            stagger={0.12}
+            className="md:col-span-4 text-xs font-mono tracking-widest text-muted-foreground leading-relaxed uppercase"
+          />
           <div className="md:col-span-8 flex justify-end">
-            <a
-              href="https://github.com"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="GitHub"
-              className="text-muted-foreground hover:text-foreground transition p-2 hover:bg-surface rounded-full hover:scale-110 active:scale-95"
-            >
-              <GithubIcon className="w-7 h-7" />
-            </a>
+            <Magnetic strength={0.6}>
+              <a
+                href="https://github.com"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="GitHub"
+                className="block text-muted-foreground hover:text-foreground transition p-2 hover:bg-surface rounded-full hover:scale-110 active:scale-95"
+              >
+                <GithubIcon className="w-7 h-7" />
+              </a>
+            </Magnetic>
           </div>
         </div>
+
 
         <h1 className="sr-only">Syahril Arfian Almazril — AI, Data and Software Engineer</h1>
 
