@@ -133,7 +133,7 @@ export function Cube3D({ faces }: { faces: CubeFace[] }) {
   return (
     <div
       ref={stageRef}
-      className="cube-stage relative select-none touch-none cursor-grab active:cursor-grabbing"
+      className="cube-stage animate-float-slow relative select-none touch-none cursor-grab active:cursor-grabbing"
       data-dragging={dragging}
       style={{ width: SIZE, height: SIZE }}
       onPointerDown={onPointerDown}
@@ -142,7 +142,7 @@ export function Cube3D({ faces }: { faces: CubeFace[] }) {
       onPointerCancel={endDrag}
     >
       <div
-        className="cube-3d animate-float-slow"
+        className="cube-3d"
         style={{
           width: SIZE,
           height: SIZE,
