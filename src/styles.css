@@ -256,7 +256,80 @@
   animation: card-swing 6s ease-in-out infinite;
 }
 
+/* ---------- 3D open box ---------- */
+
+.box-3d {
+  position: relative;
+  width: 260px;
+  height: 170px;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.box-face,
+.box-flap {
+  position: absolute;
+  background: linear-gradient(160deg, var(--surface-2), var(--surface));
+  border: 1px solid var(--border-strong);
+}
+
+.box-front,
+.box-back {
+  width: 260px;
+  height: 170px;
+}
+.box-front {
+  transform: translateZ(80px);
+}
+.box-back {
+  transform: translateZ(-80px) rotateY(180deg);
+  filter: brightness(0.7);
+}
+.box-left,
+.box-right {
+  width: 160px;
+  height: 170px;
+  left: 50px;
+}
+.box-left {
+  transform: rotateY(-90deg) translateZ(130px);
+  filter: brightness(0.8);
+}
+.box-right {
+  transform: rotateY(90deg) translateZ(130px);
+  filter: brightness(0.85);
+}
+.box-bottom {
+  width: 260px;
+  height: 160px;
+  top: 5px;
+  transform: rotateX(90deg) translateZ(-85px);
+  filter: brightness(0.55);
+}
+
+.box-flap {
+  width: 260px;
+  height: 62px;
+  top: 0;
+  transform-origin: top center;
+}
+.box-flap-l {
+  transform: translateZ(80px) rotateX(-122deg);
+}
+.box-flap-r {
+  transform: translateZ(-80px) rotateX(122deg);
+}
+
+.box-glow {
+  position: absolute;
+  inset: -30% -10% 40%;
+  background: radial-gradient(ellipse at center, color-mix(in oklab, var(--accent) 22%, transparent), transparent 70%);
+  filter: blur(18px);
+  pointer-events: none;
+}
+
 /* ---------- 3D cube ---------- */
+
 
 .cube-stage {
   perspective: 1100px;
