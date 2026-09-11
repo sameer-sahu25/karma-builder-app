@@ -44,7 +44,7 @@ export function AnimatedText({
               <motion.span
                 className={`inline-block ${itemClassName ?? ""}`}
                 initial={{ y: "115%", opacity: 0, rotateX: -55 }}
-                animate={inView ? { y: "0%", opacity: 1, rotateX: 0 } : undefined}
+                animate={inView ? { y: "0%", opacity: 1, rotateX: 0 } : { y: "115%", opacity: 0, rotateX: -55 }}
                 transition={{
                   duration: 0.85,
                   delay: delay + i * stagger,
