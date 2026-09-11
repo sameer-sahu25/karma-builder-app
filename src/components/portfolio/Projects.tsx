@@ -1,5 +1,10 @@
 import type { ReactNode } from "react";
 
+import { Magnetic } from "@/components/motion/Magnetic";
+import { Stagger, StaggerItem } from "@/components/motion/Reveal";
+import { TiltCard } from "@/components/motion/TiltCard";
+
+
 const barHeights = ["h-10", "h-14", "h-8", "h-16", "h-12", "h-10"];
 const barColors = ["bg-sky-500", "bg-sky-400", "bg-cyan-400", "bg-teal-400", "bg-emerald-400", "bg-indigo-500"];
 
