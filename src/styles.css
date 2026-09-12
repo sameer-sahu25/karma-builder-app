@@ -235,6 +235,11 @@
   }
 }
 
+@utility marquee-mask {
+  mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent);
+}
+
 @utility animate-marquee-left {
   animation: marquee-left 38s linear infinite;
 }
