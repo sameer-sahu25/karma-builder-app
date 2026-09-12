@@ -95,7 +95,8 @@ export function PendulumCard({ children, cordHeight = 90 }: { children: ReactNod
       card.removeEventListener("pointermove", move);
       card.removeEventListener("pointerup", up);
       card.removeEventListener("pointercancel", up);
-      window.removeEventListener("pointermove", globalMove);
+      window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("mousemove", onMouseMove);
     };
   }, []);
 
