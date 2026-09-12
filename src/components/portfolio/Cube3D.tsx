@@ -177,6 +177,10 @@ export function Cube3D({ faces }: { faces: CubeFace[] }) {
       onPointerCancel={endDrag}
     >
       <div
+        ref={tiltRef}
+        style={{ width: SIZE, height: SIZE, transformStyle: "preserve-3d", willChange: "transform" }}
+      >
+      <div
         className="cube-3d"
         style={{
           width: SIZE,
