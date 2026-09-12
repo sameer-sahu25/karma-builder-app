@@ -130,6 +130,41 @@ export function Cube3D({ faces }: { faces: CubeFace[] }) {
 
   useEffect(() => () => void (drag.current = null), []);
 
+  // cursor-anywhere tilt: the cube leans toward the pointer wherever it moves on the page
+  const tiltRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let tx = 0;
+    let ty = 0;
+    let cx = 0;
+    let cy = 0;
+    let raf = 0;
+
+    const onMove = (e: PointerEvent) => {
+      const r = stageRef.current?.getBoundingClientRect();
+      if (!r) return;
+      const dx = (e.clientX - (r.left + r.width / 2)) / Math.max(window.innerWidth / 2, 1);
+      const dy = (e.clientY - (r.top + r.height / 2)) / Math.max(window.innerHeight / 2, 1);
+      ty = Math.max(-1, Math.min(1, dx)) * 26;
+      tx = Math.max(-1, Math.min(1, -dy)) * 18;
+    };
+
+    const loop = () => {
+      cx += (tx - cx) * 0.08;
+      cy += (ty - cy) * 0.08;
+      if (tiltRef.current) {
+        tiltRef.current.style.transform = `rotateX(${cx.toFixed(2)}deg) rotateY(${cy.toFixed(2)}deg)`;
+      }
+      raf = requestAnimationFrame(loop);
+    };
+    raf = requestAnimationFrame(loop);
+    window.addEventListener("pointermove", onMove, { passive: true });
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("pointermove", onMove);
+    };
+  }, []);
+
   return (
     <div
       ref={stageRef}
