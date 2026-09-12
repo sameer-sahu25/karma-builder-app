@@ -51,7 +51,7 @@ function IdCard() {
           </div>
         </div>
       </PendulumCard>
-    </div>
+    </motion.div>
   );
 }
 
