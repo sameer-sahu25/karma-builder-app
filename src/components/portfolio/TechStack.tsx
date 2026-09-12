@@ -150,12 +150,12 @@ export function TechStack() {
             Tech Stack &amp; Ecosystem
           </span>
           <span className="font-mono text-[10px] text-subtle uppercase hidden sm:inline">
-            ✦ Interactive: Drag to reorder badges ✦
+            ✦ Hover to pause the loop ✦
           </span>
         </div>
 
-        <PillRow pills={rowOne} className="py-4" />
-        <PillRow pills={rowTwo} className="pt-6 mt-6 border-t border-border" />
+        <PillRow pills={rowOne} className="py-4" direction="left" />
+        <PillRow pills={rowTwo} className="pt-6 mt-6 border-t border-border" direction="right" />
       </div>
     </section>
   );
