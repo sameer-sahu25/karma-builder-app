@@ -8,12 +8,21 @@ import { BoltIcon, GithubIcon, InstagramIcon, LinkedinIcon, RobotIcon } from "./
 
 function IdCard() {
   return (
-    <div className="mt-12 relative w-full flex flex-col items-center justify-center">
-      <div className="text-center mb-6">
+    <motion.div
+      className="mt-12 relative w-full flex flex-col items-center justify-center"
+      initial={{ opacity: 0, y: 40, scale: 0.96 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ duration: 1, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+    >
+      <motion.div
+        className="text-center mb-6"
+        animate={{ y: [0, -6, 0] }}
+        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+      >
         <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-accent bg-accent/10 border border-accent/30 px-3 py-1 rounded-full">
-          ✦ <ScrambleText text="DRAG THE CARD — REAL PENDULUM PHYSICS" /> ✦
+          ✦ <ScrambleText text="MOVE YOUR CURSOR — THE CARD FOLLOWS" /> ✦
         </span>
-      </div>
+      </motion.div>
 
       <PendulumCard>
         <div className="w-[260px] sm:w-[300px] rounded-2xl border border-border-strong bg-surface/90 backdrop-blur-md p-5 shadow-2xl transition-transform duration-500 hover:scale-[1.03]">
