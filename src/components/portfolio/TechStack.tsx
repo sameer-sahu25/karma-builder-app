@@ -1,5 +1,3 @@
-import { useState } from "react";
-import { Reorder } from "motion/react";
 
 type Pill = { name: string; mark: React.ReactNode };
 
@@ -93,35 +91,36 @@ const rowTwo: Pill[] = [
   },
 ];
 
-function PillRow({ pills, className }: { pills: Pill[]; className?: string }) {
-  const [items, setItems] = useState(pills);
+function PillRow({
+  pills,
+  className,
+  direction = "left",
+}: {
+  pills: Pill[];
+  className?: string;
+  direction?: "left" | "right";
+}) {
+  const track = [...pills, ...pills];
 
   return (
-    <Reorder.Group
-      axis="x"
-      values={items}
-      onReorder={setItems}
-      as="div"
-      className={`flex flex-wrap gap-4 items-center ${className ?? ""}`}
-    >
-      {items.map((pill) => (
-        <Reorder.Item
-          key={pill.name}
-          value={pill}
-          as="div"
-          drag
-          dragElastic={0.25}
-          dragMomentum={false}
-          whileDrag={{ scale: 1.08, zIndex: 20, cursor: "grabbing" }}
-          whileHover={{ y: -2 }}
-          transition={{ type: "spring", stiffness: 500, damping: 34 }}
-          className="cursor-grab active:cursor-grabbing touch-none select-none flex items-center space-x-2.5 p-2 rounded-xl bg-surface-2/70 border border-border hover:border-border-strong transition-colors"
-        >
-          {pill.mark}
-          <span className="text-sm font-semibold tracking-tight text-foreground/85">{pill.name}</span>
-        </Reorder.Item>
-      ))}
-    </Reorder.Group>
+    <div className={`marquee-mask group relative overflow-hidden ${className ?? ""}`}>
+      <div
+        className={`flex w-max items-center gap-4 whitespace-nowrap ${
+          direction === "left" ? "animate-marquee-left" : "animate-marquee-right"
+        } group-hover:[animation-play-state:paused]`}
+      >
+        {track.map((pill, i) => (
+          <div
+            key={`${pill.name}-${i}`}
+            aria-hidden={i >= pills.length}
+            className="shrink-0 select-none flex items-center space-x-2.5 p-2 rounded-xl bg-surface-2/70 border border-border hover:border-border-strong hover:-translate-y-0.5 transition-all duration-300"
+          >
+            {pill.mark}
+            <span className="text-sm font-semibold tracking-tight text-foreground/85">{pill.name}</span>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
 
