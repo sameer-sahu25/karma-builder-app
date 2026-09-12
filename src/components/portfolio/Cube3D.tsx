@@ -209,6 +209,7 @@ export function Cube3D({ faces }: { faces: CubeFace[] }) {
           </div>
         ))}
       </div>
+      </div>
       <div
         className="absolute left-1/2 -translate-x-1/2 rounded-[50%] blur-2xl bg-black/70"
         style={{ width: SIZE * 0.9, height: 28, top: SIZE + 26 }}
