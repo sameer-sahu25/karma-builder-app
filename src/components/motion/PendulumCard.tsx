@@ -22,6 +22,7 @@ export function PendulumCard({ children, cordHeight = 90 }: { children: ReactNod
     const damping = 0.992;
     const springK = 1.6;
     let pointerAngle: number | null = null;
+    let attractAngle = 0; // target angle from global cursor position
     let last = performance.now();
     let raf = 0;
 
@@ -34,8 +35,11 @@ export function PendulumCard({ children, cordHeight = 90 }: { children: ReactNod
         velocity = (next - angle) / Math.max(dt, 0.001);
         angle = next;
       } else {
-        // pendulum torque + restoring spring, integrated semi-implicitly
-        const accel = -(gravity / 1.1) * Math.sin(angle) - springK * angle * 0.25;
+        // pendulum torque + restoring spring + gentle pull toward the cursor
+        const accel =
+          -(gravity / 1.1) * Math.sin(angle) -
+          springK * angle * 0.25 +
+          (attractAngle - angle) * 6.5;
         velocity += accel * dt;
         velocity *= damping;
         angle += velocity * dt;
@@ -72,10 +76,19 @@ export function PendulumCard({ children, cordHeight = 90 }: { children: ReactNod
       setDragging(false);
     };
 
+    // follow the cursor anywhere on the page
+    const globalMove = (e: PointerEvent) => {
+      if (pointerAngle !== null) return;
+      const p = pivot();
+      const a = Math.atan2(e.clientX - p.x, Math.max(e.clientY - p.y, 120));
+      attractAngle = Math.max(-0.55, Math.min(0.55, a * 0.55));
+    };
+
     card.addEventListener("pointerdown", down);
     card.addEventListener("pointermove", move);
     card.addEventListener("pointerup", up);
     card.addEventListener("pointercancel", up);
+    window.addEventListener("pointermove", globalMove, { passive: true });
 
     return () => {
       cancelAnimationFrame(raf);
@@ -83,6 +96,7 @@ export function PendulumCard({ children, cordHeight = 90 }: { children: ReactNod
       card.removeEventListener("pointermove", move);
       card.removeEventListener("pointerup", up);
       card.removeEventListener("pointercancel", up);
+      window.removeEventListener("pointermove", globalMove);
     };
   }, []);
 
