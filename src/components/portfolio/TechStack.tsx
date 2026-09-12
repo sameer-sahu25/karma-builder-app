@@ -105,7 +105,7 @@ function PillRow({
   return (
     <div className={`marquee-mask group relative overflow-hidden ${className ?? ""}`}>
       <div
-        className={`flex w-max items-center gap-4 whitespace-nowrap ${
+        className={`flex w-max items-center whitespace-nowrap ${
           direction === "left" ? "animate-marquee-left" : "animate-marquee-right"
         } group-hover:[animation-play-state:paused]`}
       >
@@ -113,7 +113,7 @@ function PillRow({
           <div
             key={`${pill.name}-${i}`}
             aria-hidden={i >= pills.length}
-            className="shrink-0 select-none flex items-center space-x-2.5 p-2 rounded-xl bg-surface-2/70 border border-border hover:border-border-strong hover:-translate-y-0.5 transition-all duration-300"
+            className="shrink-0 mr-4 select-none flex items-center space-x-2.5 p-2 rounded-xl bg-surface-2/70 border border-border hover:border-border-strong hover:-translate-y-0.5 transition-all duration-300"
           >
             {pill.mark}
             <span className="text-sm font-semibold tracking-tight text-foreground/85">{pill.name}</span>
