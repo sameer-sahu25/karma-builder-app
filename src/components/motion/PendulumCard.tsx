@@ -18,9 +18,7 @@ export function PendulumCard({ children, cordHeight = 90 }: { children: ReactNod
 
     let angle = 0.28; // radians
     let velocity = 0;
-    const gravity = 9.4;
-    const damping = 0.992;
-    const springK = 1.6;
+    const damping = 0.9;
     let pointerAngle: number | null = null;
     let attractAngle = 0; // target angle from global cursor position
     let last = performance.now();
@@ -35,20 +33,18 @@ export function PendulumCard({ children, cordHeight = 90 }: { children: ReactNod
         velocity = (next - angle) / Math.max(dt, 0.001);
         angle = next;
       } else {
-        // pendulum torque + restoring spring + gentle pull toward the cursor
-        const accel =
-          -(gravity / 1.1) * Math.sin(angle) -
-          springK * angle * 0.25 +
-          (attractAngle - angle) * 6.5;
+        // strong spring toward the cursor direction, with swing/overshoot
+        const accel = (attractAngle - angle) * 42 - velocity * 3.2;
         velocity += accel * dt;
         velocity *= damping;
         angle += velocity * dt;
       }
 
       const deg = (angle * 180) / Math.PI;
-      card.style.transform = `rotate(${deg.toFixed(3)}deg)`;
+      const shiftX = Math.sin(angle) * 18;
+      card.style.transform = `translateX(${shiftX.toFixed(2)}px) rotate(${deg.toFixed(3)}deg)`;
       if (cordRef.current) {
-        const x = 50 + Math.sin(angle) * 22;
+        const x = 50 + Math.sin(angle) * 26;
         cordRef.current.setAttribute("x2", `${x}%`);
       }
       raf = requestAnimationFrame(step);
@@ -77,18 +73,21 @@ export function PendulumCard({ children, cordHeight = 90 }: { children: ReactNod
     };
 
     // follow the cursor anywhere on the page
-    const globalMove = (e: PointerEvent) => {
+    const globalMove = (x: number) => {
       if (pointerAngle !== null) return;
       const p = pivot();
-      const a = Math.atan2(e.clientX - p.x, Math.max(e.clientY - p.y, 120));
-      attractAngle = Math.max(-0.55, Math.min(0.55, a * 0.55));
+      const dx = (x - p.x) / Math.max(window.innerWidth / 2, 1);
+      attractAngle = Math.max(-0.9, Math.min(0.9, dx)) * 0.85;
     };
+    const onPointerMove = (e: PointerEvent) => globalMove(e.clientX);
+    const onMouseMove = (e: MouseEvent) => globalMove(e.clientX);
 
     card.addEventListener("pointerdown", down);
     card.addEventListener("pointermove", move);
     card.addEventListener("pointerup", up);
     card.addEventListener("pointercancel", up);
-    window.addEventListener("pointermove", globalMove, { passive: true });
+    window.addEventListener("pointermove", onPointerMove, { passive: true });
+    window.addEventListener("mousemove", onMouseMove, { passive: true });
 
     return () => {
       cancelAnimationFrame(raf);
