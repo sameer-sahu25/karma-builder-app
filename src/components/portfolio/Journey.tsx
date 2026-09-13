@@ -13,42 +13,59 @@ type Role = {
 
 const roles: Role[] = [
   {
-    title: "Research Assistant",
-    org: "University AI Lab",
-    period: "Jan 2024 — Aug 2024",
-    summary: "Applied deep learning research on anomaly detection, publishing reproducible training pipelines.",
+    title: "Senior Secondary Education (12th)",
+    org: "Small Wonder Senior Secondary School, Jabalpur",
+    period: "Completed",
+    summary: "Higher secondary education with a focus on Physics, Chemistry and Mathematics.",
   },
   {
-    title: "AI Developer Intern",
-    org: "Nusantara Tech",
-    period: "Sep 2024 — Feb 2025",
-    summary: "Shipped retrieval-augmented assistants and evaluation harnesses for production LLM features.",
+    title: "B.Tech in Computer Science",
+    org: "Shree Ram Institute of Science and Technology, Jabalpur",
+    period: "2024 — 2028",
+    summary:
+      "Coursework: Data Structures & Algorithms, Web Development, Database Management Systems, Software Engineering.",
   },
   {
-    title: "Computer Network Practicum Assistant",
-    org: "Faculty of Informatics",
-    period: "Mar 2025 — Aug 2025",
-    summary: "Taught routing, subnetting and network security labs to 120+ undergraduate students.",
+    title: "WeatherApp",
+    org: "React, OpenWeather API, RESTful Integration",
+    period: "2024",
+    summary:
+      "Glassmorphism weather dashboard with dynamic backgrounds by condition, responsive layouts, location search, caching and error boundaries.",
   },
   {
-    title: "HUMIC Engineering",
-    org: "Research Center",
-    period: "September 2025 — December 2025",
-    summary: "Developed and deployed AI-driven threat detection systems in a research-focused environment.",
+    title: "Web Developer Intern — React JS",
+    org: "Alfido Tech",
+    period: "Internship",
+    summary: "Built and shipped React interfaces, reusable components and responsive layouts.",
   },
   {
-    title: "Chief Committee",
-    org: "Tech Festival",
-    period: "Jan 2026 — Apr 2026",
-    summary: "Led a 40-person committee delivering a national scale student technology conference.",
+    title: "Full Stack Developer Intern",
+    org: "CodSoft",
+    period: "Internship",
+    summary: "Developed full-stack features across frontend, backend APIs and database layers.",
   },
   {
-    title: "Data Entry Assistant",
-    org: "Regional Analytics Unit",
-    period: "May 2026 — Present",
-    summary: "Automating ingestion and quality checks across high-volume operational datasets.",
+    title: "Jabalpur Stays",
+    org: "React, Express.js, Node.js, PostgreSQL",
+    period: "2025",
+    summary:
+      "Full-stack hotel platform with real-time booking, property listings, secure auth, role-based admin dashboard and optimized queries.",
+  },
+  {
+    title: "Smart Inbox Guard",
+    org: "React, Node.js, Python, Machine Learning",
+    period: "2026",
+    summary:
+      "AI email security system: TensorFlow/scikit-learn spam and phishing detection served through a Node.js REST API with a React threat-monitoring dashboard.",
+  },
+  {
+    title: "Open Source Connect India",
+    org: "Currently Working",
+    period: "2026 — Present",
+    summary: "Contributing to open source projects and community-driven engineering initiatives.",
   },
 ];
+
 
 export function Journey() {
   const sectionRef = useRef<HTMLElement>(null);
