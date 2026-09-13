@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { AnimatePresence, motion, useMotionValue, useSpring, useTransform } from "motion/react";
+import { AnimatePresence, motion, useMotionValue, useSpring, useTransform, type MotionValue } from "motion/react";
 
 import { AnimatedText } from "@/components/motion/AnimatedText";
 import { BoltIcon, RobotIcon } from "./icons";
@@ -11,12 +11,27 @@ const roles = [
   { title: "Systems Architect", sub: "Designing resilient platforms" },
 ];
 
+/** Floating tech tokens that orbit the box; each reacts to the cursor with its own depth. */
+const floaters = [
+  { label: "TS", x: -230, y: -60, depth: 1.4, tone: "text-accent" },
+  { label: "PY", x: -170, y: 70, depth: 0.9, tone: "text-amber" },
+  { label: "GO", x: 210, y: -80, depth: 1.6, tone: "text-emerald" },
+  { label: "SQL", x: 190, y: 60, depth: 1.0, tone: "text-danger" },
+  { label: "K8s", x: -60, y: -140, depth: 2.0, tone: "text-accent" },
+  { label: "RAG", x: 80, y: -160, depth: 1.2, tone: "text-amber" },
+  { label: "API", x: -280, y: 10, depth: 0.6, tone: "text-foreground/70" },
+  { label: "LLM", x: 280, y: -10, depth: 1.8, tone: "text-emerald" },
+];
+
 /** CSS-3D open box that reacts to pointer position, with rotating role pills rising out of it. */
 function OpenBox() {
   const mx = useMotionValue(0);
   const my = useMotionValue(0);
-  const rotY = useSpring(useTransform(mx, [-1, 1], [-22, 22]), { stiffness: 120, damping: 18 });
-  const rotX = useSpring(useTransform(my, [-1, 1], [10, 26]), { stiffness: 120, damping: 18 });
+  const spring = { stiffness: 120, damping: 18 };
+  const rotY = useSpring(useTransform(mx, [-1, 1], [-22, 22]), spring);
+  const rotX = useSpring(useTransform(my, [-1, 1], [10, 26]), spring);
+  const px = useSpring(mx, { stiffness: 90, damping: 20 });
+  const py = useSpring(my, { stiffness: 90, damping: 20 });
 
   useEffect(() => {
     const onMove = (e: PointerEvent) => {
@@ -28,7 +43,12 @@ function OpenBox() {
   }, [mx, my]);
 
   return (
-    <div className="mt-10 flex justify-center" style={{ perspective: 1100 }} aria-hidden="true">
+    <div className="relative mt-10 flex justify-center" style={{ perspective: 1100 }} aria-hidden="true">
+      <div className="pointer-events-none absolute inset-0 grid place-items-center">
+        {floaters.map((f) => (
+          <Floater key={f.label} {...f} px={px} py={py} />
+        ))}
+      </div>
       <motion.div className="box-3d" style={{ rotateX: rotX, rotateY: rotY }}>
         <span className="box-face box-front" />
         <span className="box-face box-back" />
@@ -42,6 +62,39 @@ function OpenBox() {
     </div>
   );
 }
+
+function Floater({
+  label,
+  x,
+  y,
+  depth,
+  tone,
+  px,
+  py,
+}: {
+  label: string;
+  x: number;
+  y: number;
+  depth: number;
+  tone: string;
+  px: MotionValue<number>;
+  py: MotionValue<number>;
+}) {
+  const tx = useTransform(px, (v) => x + v * depth * 34);
+  const ty = useTransform(py, (v) => y + v * depth * 26);
+  const rot = useTransform(px, (v) => v * depth * 10);
+  const scale = useTransform(py, (v) => 1 + v * depth * 0.05);
+
+  return (
+    <motion.span
+      style={{ x: tx, y: ty, rotate: rot, scale }}
+      className={`absolute rounded-xl border border-border bg-surface/80 backdrop-blur-md px-3 py-1.5 font-mono text-[11px] font-bold uppercase tracking-widest ${tone}`}
+    >
+      {label}
+    </motion.span>
+  );
+}
+
 
 export function DigitalReality() {
   const [i, setI] = useState(0);
