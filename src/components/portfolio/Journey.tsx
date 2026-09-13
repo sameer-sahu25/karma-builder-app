@@ -69,13 +69,28 @@ const roles: Role[] = [
 
 export function Journey() {
   const sectionRef = useRef<HTMLElement>(null);
+  const trackRef = useRef<HTMLOListElement>(null);
+  const [distance, setDistance] = useState(0);
+
+  useEffect(() => {
+    const measure = () => {
+      const track = trackRef.current;
+      if (!track) return;
+      setDistance(Math.max(0, track.scrollWidth - window.innerWidth + 48));
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, []);
+
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start start", "end end"] });
   const eased = useSpring(scrollYProgress, { stiffness: 90, damping: 26, mass: 0.4 });
-  const x = useTransform(eased, [0, 1], ["2%", "-62%"]);
+  const x = useTransform(eased, [0, 1], [24, -distance]);
   const lineScale = useTransform(eased, [0, 1], [0.05, 1]);
 
   return (
-    <section id="journey" ref={sectionRef} className="relative" style={{ height: "320vh" }}>
+    <section id="journey" ref={sectionRef} className="relative" style={{ height: "520vh" }}>
+
       <div className="sticky top-0 h-screen overflow-hidden flex flex-col justify-center">
         <div className="px-6 md:px-12 lg:px-20 max-w-7xl mx-auto w-full">
           <AnimatedText
