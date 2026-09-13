@@ -1,5 +1,3 @@
-import { useState } from "react";
-import { Reorder } from "motion/react";
 
 type Pill = { name: string; mark: React.ReactNode };
 
