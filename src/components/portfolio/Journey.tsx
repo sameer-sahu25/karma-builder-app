@@ -115,7 +115,7 @@ export function Journey() {
             aria-hidden="true"
           />
 
-          <motion.ol className="flex items-center gap-0 list-none" style={{ x }}>
+          <motion.ol ref={trackRef} className="flex items-center gap-0 list-none w-max" style={{ x }}>
             {roles.map((role, i) => (
               <li key={role.title} className="relative shrink-0 w-[340px] sm:w-[420px] group">
                 <div className="flex items-center">
