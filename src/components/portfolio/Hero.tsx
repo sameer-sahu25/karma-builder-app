@@ -88,7 +88,7 @@ export function Hero() {
 
         <Parallax speed={0.06} className="mt-4 select-none" aria-hidden="true">
           <div className="flex justify-end">
-            <AnimatedText text="AI & DATA" split="chars" stagger={0.045} className="hero-title "  itemClassName="text-metallic" />
+            <AnimatedText text="AI & ML" split="chars" stagger={0.045} className="hero-title "  itemClassName="text-metallic" />
           </div>
 
           <div className="flex items-center justify-start relative -mt-2 md:-mt-4">
