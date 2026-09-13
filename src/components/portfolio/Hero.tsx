@@ -33,7 +33,7 @@ function IdCard() {
           <div className="mt-4 h-32 rounded-xl ambient-field border border-border flex items-center justify-center">
             <RobotIcon className="w-14 h-14 text-amber" />
           </div>
-          <p className="mt-4 text-lg font-extrabold tracking-tight">Syahril Arfian Almazril</p>
+          <p className="mt-4 text-lg font-extrabold tracking-tight">Sameer Sahu</p>
           <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground mt-1">
             AI • Data • Software
           </p>
@@ -64,7 +64,7 @@ export function Hero() {
           <AnimatedText
             as="p"
             split="lines"
-            text={"Hi, I'm Syahril Arfian Almazril.\nI build scalable systems\npowered by intelligence."}
+            text={"Hi, I'm Sameer Sahu.\nI build scalable systems\npowered by intelligence."}
             stagger={0.12}
             className="md:col-span-4 text-xs font-mono tracking-widest text-muted-foreground leading-relaxed uppercase"
           />
@@ -84,11 +84,11 @@ export function Hero() {
         </div>
 
 
-        <h1 className="sr-only">Syahril Arfian Almazril — AI, Data and Software Engineer</h1>
+        <h1 className="sr-only">Sameer Sahu — AI & ML Engineer</h1>
 
         <Parallax speed={0.06} className="mt-4 select-none" aria-hidden="true">
           <div className="flex justify-end">
-            <AnimatedText text="AI & DATA" split="chars" stagger={0.045} className="hero-title "  itemClassName="text-metallic" />
+            <AnimatedText text="AI & ML" split="chars" stagger={0.045} className="hero-title "  itemClassName="text-metallic" />
           </div>
 
           <div className="flex items-center justify-start relative -mt-2 md:-mt-4">
@@ -105,7 +105,7 @@ export function Hero() {
             </Magnetic>
             <div className="flex items-center flex-wrap">
               <AnimatedText
-        text="SOFT"
+        text="MACHINE"
         split="chars"
         delay={0.15}
         stagger={0.045}
@@ -120,7 +120,7 @@ export function Hero() {
                 <BoltIcon className="w-12 h-16 md:w-24 md:h-32 text-accent drop-shadow-[0_0_25px_rgba(56,189,248,0.6)]" />
               </motion.span>
               <AnimatedText
-        text="WARE"
+        text="LEARNING"
         split="chars"
         delay={0.3}
         stagger={0.045}
