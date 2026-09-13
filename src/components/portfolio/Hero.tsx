@@ -105,7 +105,7 @@ export function Hero() {
             </Magnetic>
             <div className="flex items-center flex-wrap">
               <AnimatedText
-        text="SOFT"
+        text="MACHINE"
         split="chars"
         delay={0.15}
         stagger={0.045}
@@ -120,7 +120,7 @@ export function Hero() {
                 <BoltIcon className="w-12 h-16 md:w-24 md:h-32 text-accent drop-shadow-[0_0_25px_rgba(56,189,248,0.6)]" />
               </motion.span>
               <AnimatedText
-        text="WARE"
+        text="LEARNING"
         split="chars"
         delay={0.3}
         stagger={0.045}
