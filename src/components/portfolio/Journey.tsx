@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useSpring, useTransform } from "motion/react";
 
 import { AnimatedText } from "@/components/motion/AnimatedText";
@@ -69,13 +69,28 @@ const roles: Role[] = [
 
 export function Journey() {
   const sectionRef = useRef<HTMLElement>(null);
+  const trackRef = useRef<HTMLOListElement>(null);
+  const [distance, setDistance] = useState(0);
+
+  useEffect(() => {
+    const measure = () => {
+      const track = trackRef.current;
+      if (!track) return;
+      setDistance(Math.max(0, track.scrollWidth - window.innerWidth + 48));
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, []);
+
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start start", "end end"] });
   const eased = useSpring(scrollYProgress, { stiffness: 90, damping: 26, mass: 0.4 });
-  const x = useTransform(eased, [0, 1], ["2%", "-62%"]);
+  const x = useTransform(eased, [0, 1], [24, -distance]);
   const lineScale = useTransform(eased, [0, 1], [0.05, 1]);
 
   return (
-    <section id="journey" ref={sectionRef} className="relative" style={{ height: "320vh" }}>
+    <section id="journey" ref={sectionRef} className="relative" style={{ height: "520vh" }}>
+
       <div className="sticky top-0 h-screen overflow-hidden flex flex-col justify-center">
         <div className="px-6 md:px-12 lg:px-20 max-w-7xl mx-auto w-full">
           <AnimatedText
@@ -100,7 +115,7 @@ export function Journey() {
             aria-hidden="true"
           />
 
-          <motion.ol className="flex items-center gap-0 list-none" style={{ x }}>
+          <motion.ol ref={trackRef} className="flex items-center gap-0 list-none w-max" style={{ x }}>
             {roles.map((role, i) => (
               <li key={role.title} className="relative shrink-0 w-[340px] sm:w-[420px] group">
                 <div className="flex items-center">
