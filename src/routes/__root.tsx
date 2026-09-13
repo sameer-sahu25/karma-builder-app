@@ -77,13 +77,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Syahril Arfian Almazril — AI & Data Software Engineer" },
+      { title: "Sameer Sahu — AI & ML Engineer" },
       {
         name: "description",
         content: "Applied AI, scalable data platforms and robust software engineering.",
       },
-      { name: "author", content: "Syahril Arfian Almazril" },
-      { property: "og:title", content: "Syahril Arfian Almazril — AI & Data Software Engineer" },
+      { name: "author", content: "Sameer Sahu" },
+      { property: "og:title", content: "Sameer Sahu — AI & ML Engineer" },
       {
         property: "og:description",
         content: "Applied AI, scalable data platforms and robust software engineering.",

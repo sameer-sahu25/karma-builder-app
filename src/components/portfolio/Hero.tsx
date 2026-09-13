@@ -33,7 +33,7 @@ function IdCard() {
           <div className="mt-4 h-32 rounded-xl ambient-field border border-border flex items-center justify-center">
             <RobotIcon className="w-14 h-14 text-amber" />
           </div>
-          <p className="mt-4 text-lg font-extrabold tracking-tight">Syahril Arfian Almazril</p>
+          <p className="mt-4 text-lg font-extrabold tracking-tight">Sameer Sahu</p>
           <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground mt-1">
             AI • Data • Software
           </p>
@@ -64,7 +64,7 @@ export function Hero() {
           <AnimatedText
             as="p"
             split="lines"
-            text={"Hi, I'm Syahril Arfian Almazril.\nI build scalable systems\npowered by intelligence."}
+            text={"Hi, I'm Sameer Sahu.\nI build scalable systems\npowered by intelligence."}
             stagger={0.12}
             className="md:col-span-4 text-xs font-mono tracking-widest text-muted-foreground leading-relaxed uppercase"
           />
@@ -84,7 +84,7 @@ export function Hero() {
         </div>
 
 
-        <h1 className="sr-only">Syahril Arfian Almazril — AI, Data and Software Engineer</h1>
+        <h1 className="sr-only">Sameer Sahu — AI & ML Engineer</h1>
 
         <Parallax speed={0.06} className="mt-4 select-none" aria-hidden="true">
           <div className="flex justify-end">

@@ -22,9 +22,9 @@ import { CallToAction } from "@/components/portfolio/CallToAction";
 import { SiteFooter } from "@/components/portfolio/SiteFooter";
 
 
-const title = "Syahril Arfian Almazril — AI & Data Software Engineer";
+const title = "Sameer Sahu — AI & ML Engineer";
 const description =
-  "Portfolio of Syahril Arfian Almazril: applied AI, scalable data platforms and robust software engineering — RAG systems, deep learning and full-stack architecture.";
+  "Portfolio of Sameer Sahu: applied AI, scalable data platforms and robust software engineering — RAG systems, deep learning and full-stack architecture.";
 
 export const Route = createFileRoute("/")({
   head: () => ({
