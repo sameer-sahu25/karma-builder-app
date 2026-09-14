@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { ChevronDownIcon, ExpandIcon, GlobeIcon, SunIcon } from "./icons";
 
@@ -58,12 +59,12 @@ export function SiteNav() {
           >
             Projects
           </a>
-          <a
-            href="#contact"
+          <Link
+            to="/contact"
             className="px-4 py-1.5 rounded-full text-xs font-medium text-muted-foreground hover:text-foreground transition hover:scale-105 duration-200"
           >
             Contact
-          </a>
+          </Link>
         </div>
 
         <div className="flex items-center space-x-2">

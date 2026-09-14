@@ -1,3 +1,5 @@
+import { Link } from "@tanstack/react-router";
+
 import { FileIcon, MailIcon } from "./icons";
 
 export function CallToAction() {
@@ -15,13 +17,13 @@ export function CallToAction() {
           Let's transform ambitious ideas into production ready solutions.
         </p>
         <div className="flex flex-wrap items-center justify-center gap-4">
-          <a
-            href="mailto:contact@azril.dev"
+          <Link
+            to="/contact"
             className="inline-flex items-center space-x-2.5 px-7 py-3 rounded-full bg-invert text-invert-foreground font-semibold text-sm hover:opacity-90 transition-all hover:scale-105 active:scale-95 duration-200 shadow-xl"
           >
             <MailIcon className="w-4 h-4" />
             <span>Hire Me</span>
-          </a>
+          </Link>
           <a
             href="#projects"
             className="inline-flex items-center space-x-2.5 px-7 py-3 rounded-full bg-surface border border-border-strong font-semibold text-sm hover:bg-muted transition-all hover:scale-105 active:scale-95 duration-200 shadow-xl"
