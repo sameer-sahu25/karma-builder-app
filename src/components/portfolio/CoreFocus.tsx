@@ -62,7 +62,7 @@ export function CoreFocus() {
                 </p>
               </div>
               <p className="pt-6 font-signature text-3xl sm:text-4xl text-muted-foreground select-none hover:text-amber transition-colors duration-300">
-                Azril
+                Sameer 
               </p>
             </div>
           </div>
