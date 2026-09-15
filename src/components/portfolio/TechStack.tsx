@@ -131,7 +131,7 @@ function PillRow({
 
 export function TechStack() {
   return (
-    <section className="py-20 px-6 md:px-12 lg:px-20 border-t border-border">
+    <section id="tech-stack" className="py-20 px-6 md:px-12 lg:px-20 border-t border-border">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-16 items-start">
           <h2 className="lg:col-span-7 text-2xl sm:text-4xl font-bold tracking-tight leading-snug reveal">
