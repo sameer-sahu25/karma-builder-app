@@ -1,64 +1,20 @@
-import type { ReactNode } from "react";
-
 import { Magnetic } from "@/components/motion/Magnetic";
 import { Stagger, StaggerItem } from "@/components/motion/Reveal";
 import { TiltCard } from "@/components/motion/TiltCard";
+import { GithubIcon } from "./icons";
 
 
-const barHeights = ["h-10", "h-14", "h-8", "h-16", "h-12", "h-10"];
-const barColors = ["bg-sky-500", "bg-sky-400", "bg-cyan-400", "bg-teal-400", "bg-emerald-400", "bg-indigo-500"];
-
-function DashboardMock() {
+function ProjectVisual({ mark, stack }: { mark: string; stack: string[] }) {
   return (
-    <div className="relative bg-zinc-900 rounded-lg p-3 border border-zinc-700 hover:border-sky-400 transition-colors">
-      <div className="bg-zinc-950 p-3 rounded font-mono text-[10px] text-zinc-300 space-y-2">
-        <div className="flex justify-between border-b border-zinc-800 pb-1 text-zinc-400">
-          <span>LOAD TIME: 0.7s</span>
-          <span className="text-emerald-400">57.1% BOUNCE</span>
-        </div>
-        <div className="h-16 flex items-end space-x-1 pt-2">
-          {barHeights.map((h, i) => (
-            <div key={i} className={`w-1/6 ${h} ${barColors[i]} transition-all`} />
-          ))}
-        </div>
-        <div className="flex justify-between text-[9px] text-zinc-500 pt-1">
-          <span>SESSIONS: 479K</span>
-          <span>PAGE VIEWS: 2.7M</span>
+    <div className="relative overflow-hidden rounded-lg border border-zinc-700 bg-zinc-950 p-5 transition-colors group-hover:border-sky-400">
+      <div className="absolute inset-0 grid-field opacity-60" aria-hidden="true" />
+      <div className="relative flex min-h-36 flex-col justify-between">
+        <span className="font-mono text-[10px] uppercase text-zinc-500">github.com / sameer-sahu25</span>
+        <strong className="text-5xl font-black text-zinc-100">{mark}</strong>
+        <div className="flex flex-wrap gap-1.5">
+          {stack.map((item) => <span key={item} className="rounded border border-zinc-700 bg-zinc-900 px-2 py-1 font-mono text-[9px] text-zinc-400">{item}</span>)}
         </div>
       </div>
-    </div>
-  );
-}
-
-function LaptopMock() {
-  return (
-    <div className="w-full max-w-xs mx-auto bg-zinc-900 p-2 rounded-t-lg border-t-2 border-zinc-700 hover:border-amber-400 transition-colors">
-      <div className="bg-white p-3 rounded text-center">
-        <p className="text-xs font-black text-black">
-          The future of writing is <span className="text-orange-600">autonomous.</span>
-        </p>
-        <p className="text-[9px] text-zinc-500 mt-1">Multi-agent orchestrator for production-grade publishing.</p>
-      </div>
-      <div className="h-3 bg-zinc-800 mt-2 rounded-b flex items-center justify-center">
-        <div className="w-12 h-1 bg-zinc-600 rounded-full" />
-      </div>
-    </div>
-  );
-}
-
-function IdentityMock() {
-  return (
-    <div className="bg-black text-white p-4 rounded border border-zinc-800 hover:border-sky-400 transition-colors">
-      <div className="flex items-center justify-between mb-2 text-[9px] font-mono text-zinc-500">
-        <span>IDENTITY // ESTABLISHED</span>
-        <span className="text-emerald-400">10+ SHIPPED</span>
-      </div>
-      <p className="text-xs font-black uppercase tracking-wider">
-        Architecting <span className="text-cyber font-black">Digital Reality</span>
-      </p>
-      <p className="text-[8px] text-zinc-400 mt-1 leading-snug">
-        Fusing deep technical expertise in Artificial Intelligence with proven strategic leadership.
-      </p>
     </div>
   );
 }
@@ -69,37 +25,56 @@ type Project = {
   blurb: string;
   title: string;
   year: string;
-  visual: ReactNode;
+  href: string;
+  mark: string;
+  stack: string[];
   hover: string;
 };
 
 const projects: Project[] = [
   {
     index: "01",
-    category: "AI & Automation",
-    blurb: "ai-driven browser interaction & testing engine.",
-    title: "Browser Automation Agent",
+    category: "AI & Network Automation",
+    blurb: "Network telemetry, PyATS diagnostics and LLM-powered remediation for safe, self-healing infrastructure.",
+    title: "Cisco NetStage AI",
     year: "2026",
-    visual: <DashboardMock />,
+    href: "https://github.com/sameer-sahu25/cisco-netstage-ai-",
+    mark: "CISCO / AI",
+    stack: ["Python", "PyATS", "LLM", "Telemetry"],
     hover: "hover:text-sky-600",
   },
   {
     index: "02",
-    category: "AI & Content",
-    blurb: "multi-agent orchestration for research-backed content.",
-    title: "Swarm AI Blog Writer",
-    year: "2025",
-    visual: <LaptopMock />,
-    hover: "hover:text-orange-600",
+    category: "AI & Social Impact",
+    blurb: "Housing stability and tenant support platform with personalized plans, risk profiling and court preparation.",
+    title: "Stability AI",
+    year: "2026",
+    href: "https://github.com/sameer-sahu25/house-",
+    mark: "HOME / AI",
+    stack: ["Next.js", "Express", "MongoDB", "Gemini"],
+    hover: "hover:text-emerald-600",
   },
   {
     index: "03",
-    category: "Creative Tech",
-    blurb: "immersive 3d portfolio with webgl shaders.",
-    title: "Creative Portfolio Website",
-    year: "2025",
-    visual: <IdentityMock />,
+    category: "Frontend Development",
+    blurb: "A polished, responsive Jordan-inspired landing page focused on bold visuals and product storytelling.",
+    title: "Jordan Landing Page",
+    year: "2026",
+    href: "https://github.com/sameer-sahu25/jordanlandingpage",
+    mark: "JORDAN",
+    stack: ["JavaScript", "Responsive UI", "Landing Page"],
     hover: "hover:text-sky-600",
+  },
+  {
+    index: "04",
+    category: "Full Stack Commerce",
+    blurb: "Premium bakery experience with a product gallery, secure accounts, profiles and WhatsApp ordering.",
+    title: "The Cake Company",
+    year: "2026",
+    href: "https://github.com/sameer-sahu25/FUTURE_FS_03",
+    mark: "CAKE / CO.",
+    stack: ["React", "Express", "PostgreSQL", "Cloudinary"],
+    hover: "hover:text-orange-600",
   },
 ];
 
@@ -131,7 +106,7 @@ export function Projects() {
                     </div>
 
                     <div className="lg:col-span-4 transition-transform duration-500 group-hover:scale-[1.06]">
-                      {p.visual}
+                      <ProjectVisual mark={p.mark} stack={p.stack} />
                     </div>
 
                     <div className="lg:col-span-4 flex flex-col justify-between self-stretch text-left lg:text-right">
@@ -144,10 +119,12 @@ export function Projects() {
                         <span className="font-mono text-xs text-zinc-500">{p.year}</span>
                         <Magnetic strength={0.5}>
                           <a
-                            href="#focus"
+                            href={p.href}
+                            target="_blank"
+                            rel="noreferrer"
                             className="font-mono text-xs font-bold uppercase tracking-wider hover:opacity-70 transition border-b border-current pb-0.5 inline-block"
                           >
-                            View More
+                            <GithubIcon className="mr-1.5 inline h-4 w-4" /> View Repository
                           </a>
                         </Magnetic>
                       </div>
@@ -166,7 +143,7 @@ export function Projects() {
             <div className="w-24 sm:w-40 h-[2px] bg-muted rounded-full overflow-hidden">
               <div className="w-3/5 h-full bg-foreground" />
             </div>
-            <span className="font-mono text-xs font-bold tracking-wider">3 / 5</span>
+            <span className="font-mono text-xs font-bold tracking-wider">4 / 4</span>
           </div>
           <span className="text-xs font-mono text-subtle">Scroll to explore more ↓</span>
         </div>
