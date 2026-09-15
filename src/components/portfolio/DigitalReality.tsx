@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { AnimatePresence, motion, useMotionValue, useSpring, useTransform, type MotionValue } from "motion/react";
+import { AnimatePresence, motion, useMotionValue, useSpring, useTransform } from "motion/react";
 
 import { AnimatedText } from "@/components/motion/AnimatedText";
+import creativeTechBurst from "@/assets/creative-tech-burst.png";
 import { BoltIcon, RobotIcon } from "./icons";
 
 const roles = [
@@ -11,59 +12,7 @@ const roles = [
   { title: "Systems Architect", sub: "Designing resilient platforms" },
 ];
 
-/** Tokens that burst out of the box, drift upward, and react to the cursor with their own depth. */
-const floaters = [
-  { label: "TS", x: -180, drift: -230, depth: 1.4, tone: "text-accent", delay: 0 },
-  { label: "PY", x: -110, drift: -300, depth: 0.9, tone: "text-amber", delay: 1.1 },
-  { label: "GO", x: 150, drift: -260, depth: 1.6, tone: "text-emerald", delay: 0.6 },
-  { label: "SQL", x: 110, drift: -320, depth: 1.0, tone: "text-danger", delay: 2.2 },
-  { label: "K8s", x: -40, drift: -340, depth: 2.0, tone: "text-accent", delay: 1.7 },
-  { label: "RAG", x: 55, drift: -300, depth: 1.2, tone: "text-amber", delay: 2.8 },
-  { label: "API", x: -215, drift: -200, depth: 0.6, tone: "text-foreground/70", delay: 3.3 },
-  { label: "LLM", x: 210, drift: -220, depth: 1.8, tone: "text-emerald", delay: 0.3 },
-];
-
-function Floater({
-  label,
-  x,
-  drift,
-  depth,
-  tone,
-  delay,
-  px,
-  py,
-}: {
-  label: string;
-  x: number;
-  drift: number;
-  depth: number;
-  tone: string;
-  delay: number;
-  px: MotionValue<number>;
-  py: MotionValue<number>;
-}) {
-  const tx = useTransform(px, (v) => x + v * depth * 34);
-  const rot = useTransform(px, (v) => v * depth * 12);
-
-  return (
-    <motion.span
-      style={{ x: tx, rotate: rot }}
-      className="absolute bottom-24 left-1/2 will-change-transform"
-      initial={false}
-    >
-      <motion.span
-        initial={{ y: 40, opacity: 0, scale: 0.6 }}
-        animate={{ y: [40, drift], opacity: [0, 1, 1, 0], scale: [0.6, 1, 1, 0.85] }}
-        transition={{ duration: 6, delay, repeat: Infinity, ease: "easeOut", times: [0, 0.18, 0.75, 1] }}
-        className={`block rounded-xl border border-border bg-surface/80 backdrop-blur-md px-3 py-1.5 font-mono text-[11px] font-bold uppercase tracking-widest ${tone}`}
-      >
-        {label}
-      </motion.span>
-    </motion.span>
-  );
-}
-
-/** CSS-3D open box: role pills rise out of it and tech tokens burst upward. */
+/** Open box with a cursor-driven creative burst, matching the reference interaction. */
 function OpenBox({ index }: { index: number }) {
   const mx = useMotionValue(0);
   const my = useMotionValue(0);
@@ -72,6 +21,11 @@ function OpenBox({ index }: { index: number }) {
   const rotX = useSpring(useTransform(my, [-1, 1], [10, 26]), spring);
   const px = useSpring(mx, { stiffness: 90, damping: 20 });
   const py = useSpring(my, { stiffness: 90, damping: 20 });
+  const burstX = useTransform(px, [-1, 1], [-300, 300]);
+  const burstY = useTransform(py, [-1, 1], [-105, 105]);
+  const burstRotate = useTransform(px, [-1, 1], [-8, 8]);
+  const pillX = useTransform(px, [-1, 1], [-24, 24]);
+  const pillY = useTransform(py, [-1, 1], [-12, 12]);
 
   useEffect(() => {
     const onMove = (e: PointerEvent) => {
@@ -85,14 +39,22 @@ function OpenBox({ index }: { index: number }) {
   const role = roles[index]!;
 
   return (
-    <div className="relative mt-24 flex justify-center" style={{ perspective: 1100 }}>
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 top-[-220px]" aria-hidden="true">
-        <div className="relative w-full h-full">
-          {floaters.map((f) => (
-            <Floater key={f.label} {...f} px={px} py={py} />
-          ))}
-        </div>
-      </div>
+    <div className="relative mt-20 flex min-h-[360px] justify-center" style={{ perspective: 1100 }}>
+      <motion.img
+        src={creativeTechBurst}
+        alt=""
+        width={1200}
+        height={1200}
+        loading="lazy"
+        aria-hidden="true"
+        draggable={false}
+        style={{ x: burstX, y: burstY, rotate: burstRotate }}
+        initial={{ opacity: 0, scale: 0.45, y: 100 }}
+        whileInView={{ opacity: 1, scale: 1, y: 0 }}
+        viewport={{ once: false, amount: 0.35 }}
+        transition={{ type: "spring", stiffness: 95, damping: 17, mass: 0.8 }}
+        className="pointer-events-none absolute bottom-24 left-1/2 z-10 h-auto w-[310px] -translate-x-1/2 select-none drop-shadow-2xl sm:w-[390px] md:w-[460px]"
+      />
 
       {/* role pills rising out of the box */}
       <div
@@ -102,10 +64,11 @@ function OpenBox({ index }: { index: number }) {
         <AnimatePresence initial={false}>
           <motion.div
             key={role.title}
+            style={{ x: pillX, y: pillY }}
             initial={{ opacity: 0, y: 70, scale: 0.7, filter: "blur(8px)" }}
-            animate={{ opacity: 1, y: -60, scale: 1, filter: "blur(0px)" }}
-            exit={{ opacity: 0, y: -190, scale: 0.92, filter: "blur(6px)" }}
-            transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1] }}
+            animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+            exit={{ opacity: 0, y: -85, scale: 0.92, filter: "blur(6px)" }}
+            transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
             className="absolute inline-flex items-center gap-4 rounded-full border border-border bg-surface/85 backdrop-blur-md pl-3 pr-7 py-3 shadow-2xl"
           >
             <span className="w-11 h-11 rounded-full bg-surface-2 grid place-items-center text-accent">
@@ -119,7 +82,7 @@ function OpenBox({ index }: { index: number }) {
         </AnimatePresence>
       </div>
 
-      <motion.div className="box-3d relative z-30" style={{ rotateX: rotX, rotateY: rotY }} aria-hidden="true">
+      <motion.div className="box-3d relative z-30 mt-24" style={{ rotateX: rotX, rotateY: rotY }} aria-hidden="true">
         <span className="box-face box-front" />
         <span className="box-face box-back" />
         <span className="box-face box-left" />
@@ -137,7 +100,7 @@ export function DigitalReality() {
   const [i, setI] = useState(0);
 
   useEffect(() => {
-    const id = window.setInterval(() => setI((v) => (v + 1) % roles.length), 2800);
+    const id = window.setInterval(() => setI((v) => (v + 1) % roles.length), 1450);
     return () => window.clearInterval(id);
   }, []);
 
