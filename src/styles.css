@@ -89,6 +89,57 @@
   --invert-foreground: oklch(0.13 0 0);
 }
 
+:root.light {
+  --background: oklch(0.985 0.002 260);
+  --foreground: oklch(0.2 0.01 260);
+  --surface: oklch(1 0 0);
+  --surface-2: oklch(0.965 0.003 260);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.2 0.01 260);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.2 0.01 260);
+
+  --primary: oklch(0.22 0.01 260);
+  --primary-foreground: oklch(0.99 0 0);
+  --secondary: oklch(0.94 0.004 260);
+  --secondary-foreground: oklch(0.2 0.01 260);
+  --muted: oklch(0.94 0.004 260);
+  --muted-foreground: oklch(0.46 0.012 260);
+  --subtle: oklch(0.6 0.012 260);
+
+  --accent: oklch(0.6 0.15 230);
+  --accent-foreground: oklch(0.99 0 0);
+  --amber: oklch(0.68 0.16 70);
+  --danger: oklch(0.58 0.22 27);
+  --emerald: oklch(0.6 0.15 160);
+
+  --border: oklch(0.9 0.005 260);
+  --border-strong: oklch(0.82 0.008 260);
+  --input: oklch(0.9 0.005 260);
+  --ring: oklch(0.6 0.15 230);
+
+  --invert: oklch(0.15 0 0);
+  --invert-foreground: oklch(1 0 0);
+}
+
+:root.light .tech-dots {
+  background-image: radial-gradient(rgba(0, 0, 0, 0.12) 1px, transparent 1px);
+}
+
+:root.light .grid-field {
+  background-image:
+    linear-gradient(to right, rgba(0, 0, 0, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
+}
+
+:root.light .text-metallic {
+  background: linear-gradient(135deg, #0f172a 0%, #475569 35%, #94a3b8 50%, #475569 70%, #0f172a 100%);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
 @layer base {
   * {
     border-color: var(--color-border);

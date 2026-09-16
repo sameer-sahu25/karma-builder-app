@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ChevronDownIcon, ExpandIcon, FileIcon, GlobeIcon, RobotIcon, SunIcon } from "./icons";
+import { ChevronDownIcon, ExpandIcon, FileIcon, GlobeIcon, MoonIcon, RobotIcon, SunIcon } from "./icons";
 
 const aboutLinks = [
   { label: "Projects", detail: "Explore my latest builds", href: "#projects", icon: "↗" },
@@ -32,6 +32,17 @@ const toolButton =
 
 export function SiteNav() {
   const time = useClock();
+  const [theme, setTheme] = useState<"dark" | "light">("dark");
+
+  useEffect(() => {
+    const stored = window.localStorage.getItem("theme");
+    if (stored === "light") setTheme("light");
+  }, []);
+
+  useEffect(() => {
+    document.documentElement.classList.toggle("light", theme === "light");
+    window.localStorage.setItem("theme", theme);
+  }, [theme]);
 
   const toggleFullscreen = () => {
     if (document.fullscreenElement) void document.exitFullscreen();
@@ -101,8 +112,14 @@ export function SiteNav() {
           <button type="button" className={toolButton} title="Language" aria-label="Language">
             <GlobeIcon className="w-4 h-4" />
           </button>
-          <button type="button" className={toolButton} title="Theme" aria-label="Theme">
-            <SunIcon className="w-4 h-4" />
+          <button
+            type="button"
+            onClick={() => setTheme((t) => (t === "dark" ? "light" : "dark"))}
+            className={toolButton}
+            title={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}
+            aria-label="Toggle theme"
+          >
+            {theme === "dark" ? <SunIcon className="w-4 h-4" /> : <MoonIcon className="w-4 h-4" />}
           </button>
         </div>
       </nav>
