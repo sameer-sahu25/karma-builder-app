@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ChevronDownIcon, ExpandIcon, FileIcon, GlobeIcon, RobotIcon, SunIcon } from "./icons";
+import { ChevronDownIcon, ExpandIcon, FileIcon, GlobeIcon, MoonIcon, RobotIcon, SunIcon } from "./icons";
 
 const aboutLinks = [
   { label: "Projects", detail: "Explore my latest builds", href: "#projects", icon: "↗" },
