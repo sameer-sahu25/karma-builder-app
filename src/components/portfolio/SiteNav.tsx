@@ -32,6 +32,17 @@ const toolButton =
 
 export function SiteNav() {
   const time = useClock();
+  const [theme, setTheme] = useState<"dark" | "light">("dark");
+
+  useEffect(() => {
+    const stored = window.localStorage.getItem("theme");
+    if (stored === "light") setTheme("light");
+  }, []);
+
+  useEffect(() => {
+    document.documentElement.classList.toggle("light", theme === "light");
+    window.localStorage.setItem("theme", theme);
+  }, [theme]);
 
   const toggleFullscreen = () => {
     if (document.fullscreenElement) void document.exitFullscreen();
