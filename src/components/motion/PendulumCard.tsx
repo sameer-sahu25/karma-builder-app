@@ -16,11 +16,12 @@ export function PendulumCard({ children, cordHeight = 90 }: { children: ReactNod
     if (!card || !wrap) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    let angle = 0.28; // radians
+    let angle = 0.55; // radians — released from the side so it swings on load
     let velocity = 0;
-    const damping = 0.9;
     let pointerAngle: number | null = null;
     let attractAngle = 0; // target angle from global cursor position
+    let followMode = false; // becomes true once the intro swing settles
+    let calm = 0;
     let last = performance.now();
     let raf = 0;
 
@@ -32,24 +33,36 @@ export function PendulumCard({ children, cordHeight = 90 }: { children: ReactNod
         const next = pointerAngle;
         velocity = (next - angle) / Math.max(dt, 0.001);
         angle = next;
-      } else {
-        // strong spring toward the cursor direction, with swing/overshoot
-        const accel = (attractAngle - angle) * 42 - velocity * 3.2;
+        calm = 0;
+      } else if (!followMode) {
+        // free pendulum: gravity + light damping until it comes to rest
+        const accel = -14 * Math.sin(angle) - velocity * 1.15;
         velocity += accel * dt;
-        velocity *= damping;
+        angle += velocity * dt;
+        if (Math.abs(angle) < 0.06 && Math.abs(velocity) < 0.35) {
+          calm += dt;
+          if (calm > 0.45) followMode = true;
+        } else {
+          calm = 0;
+        }
+      } else {
+        // settled: leans toward the cursor with a springy overshoot
+        const accel = (attractAngle - angle) * 26 - velocity * 4.2;
+        velocity += accel * dt;
         angle += velocity * dt;
       }
 
       const deg = (angle * 180) / Math.PI;
-      const shiftX = Math.sin(angle) * 18;
-      card.style.transform = `translateX(${shiftX.toFixed(2)}px) rotate(${deg.toFixed(3)}deg)`;
+      card.style.transform = `rotate(${deg.toFixed(3)}deg)`;
       if (cordRef.current) {
-        const x = 50 + Math.sin(angle) * 26;
-        cordRef.current.setAttribute("x2", `${x}%`);
+        const unit = 100 / 320; // svg units per px
+        cordRef.current.setAttribute("x2", `${50 + Math.sin(angle) * cordHeight * unit}`);
+        cordRef.current.setAttribute("y2", `${Math.cos(angle) * cordHeight}`);
       }
       raf = requestAnimationFrame(step);
     };
     raf = requestAnimationFrame(step);
+
 
     const pivot = () => {
       const r = wrap.getBoundingClientRect();
@@ -69,6 +82,7 @@ export function PendulumCard({ children, cordHeight = 90 }: { children: ReactNod
     };
     const up = () => {
       pointerAngle = null;
+      followMode = true;
       setDragging(false);
     };
 
@@ -98,7 +112,7 @@ export function PendulumCard({ children, cordHeight = 90 }: { children: ReactNod
       window.removeEventListener("pointermove", onPointerMove);
       window.removeEventListener("mousemove", onMouseMove);
     };
-  }, []);
+  }, [cordHeight]);
 
   return (
     <div ref={wrapRef} className="relative flex flex-col items-center" style={{ width: 320 }}>
@@ -112,9 +126,9 @@ export function PendulumCard({ children, cordHeight = 90 }: { children: ReactNod
       >
         <line
           ref={cordRef}
-          x1="50%"
+          x1="50"
           y1="0"
-          x2="50%"
+          x2="50"
           y2={cordHeight}
           stroke="currentColor"
           className="text-border-strong"
