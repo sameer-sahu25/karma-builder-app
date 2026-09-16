@@ -82,6 +82,7 @@ export function PendulumCard({ children, cordHeight = 90 }: { children: ReactNod
     };
     const up = () => {
       pointerAngle = null;
+      followMode = true;
       setDragging(false);
     };
 
@@ -111,7 +112,7 @@ export function PendulumCard({ children, cordHeight = 90 }: { children: ReactNod
       window.removeEventListener("pointermove", onPointerMove);
       window.removeEventListener("mousemove", onMouseMove);
     };
-  }, []);
+  }, [cordHeight]);
 
   return (
     <div ref={wrapRef} className="relative flex flex-col items-center" style={{ width: 320 }}>
@@ -125,9 +126,9 @@ export function PendulumCard({ children, cordHeight = 90 }: { children: ReactNod
       >
         <line
           ref={cordRef}
-          x1="50%"
+          x1="50"
           y1="0"
-          x2="50%"
+          x2="50"
           y2={cordHeight}
           stroke="currentColor"
           className="text-border-strong"
