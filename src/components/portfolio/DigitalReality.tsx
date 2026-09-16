@@ -40,21 +40,30 @@ function OpenBox({ index }: { index: number }) {
 
   return (
     <div className="relative mt-20 flex min-h-[360px] justify-center" style={{ perspective: 1100 }}>
-      <motion.img
-        src={creativeTechBurst}
-        alt=""
-        width={1200}
-        height={1200}
-        loading="lazy"
-        aria-hidden="true"
-        draggable={false}
-        style={{ x: burstX, y: burstY, rotate: burstRotate }}
-        initial={{ opacity: 0, scale: 0.45, y: 100 }}
-        whileInView={{ opacity: 1, scale: 1, y: 0 }}
-        viewport={{ once: false, amount: 0.35 }}
-        transition={{ type: "spring", stiffness: 95, damping: 17, mass: 0.8 }}
-        className="pointer-events-none absolute bottom-24 left-1/2 z-10 h-auto w-[310px] -translate-x-1/2 select-none drop-shadow-2xl sm:w-[390px] md:w-[460px]"
-      />
+      <AnimatePresence initial={false} mode="sync">
+        <motion.img
+          key={role.title}
+          src={creativeTechBurst}
+          alt=""
+          width={1200}
+          height={1200}
+          loading="lazy"
+          aria-hidden="true"
+          draggable={false}
+          style={{ x: burstX, y: burstY, rotate: burstRotate }}
+          initial={{ opacity: 0, scale: 0.4, y: 150 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.28, y: 190, filter: "blur(4px)" }}
+          transition={{
+            type: "spring",
+            stiffness: 95,
+            damping: 17,
+            mass: 0.8,
+            opacity: { duration: 0.45 },
+          }}
+          className="pointer-events-none absolute bottom-24 left-1/2 z-10 h-auto w-[310px] -translate-x-1/2 select-none drop-shadow-2xl sm:w-[390px] md:w-[460px]"
+        />
+      </AnimatePresence>
 
       {/* role pills rising out of the box */}
       <div
