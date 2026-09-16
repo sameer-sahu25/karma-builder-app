@@ -16,12 +16,13 @@ export function PendulumCard({ children, cordHeight = 90 }: { children: ReactNod
     if (!card || !wrap) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    let angle = 0.55; // radians — released from the side so it swings on load
-    let velocity = 0;
+    let angle = 0.9; // released farther from the side for a stronger opening swing
+    let velocity = -0.35;
     let pointerAngle: number | null = null;
     let attractAngle = 0; // target angle from global cursor position
     let followMode = false; // becomes true once the intro swing settles
     let calm = 0;
+    const startedAt = performance.now();
     let last = performance.now();
     let raf = 0;
 
@@ -36,18 +37,20 @@ export function PendulumCard({ children, cordHeight = 90 }: { children: ReactNod
         calm = 0;
       } else if (!followMode) {
         // free pendulum: gravity + light damping until it comes to rest
-        const accel = -14 * Math.sin(angle) - velocity * 1.15;
+        const accel = -12.5 * Math.sin(angle) - velocity * 0.72;
         velocity += accel * dt;
         angle += velocity * dt;
-        if (Math.abs(angle) < 0.06 && Math.abs(velocity) < 0.35) {
+        if (Math.abs(angle) < 0.08 && Math.abs(velocity) < 0.42) {
           calm += dt;
-          if (calm > 0.45) followMode = true;
+          if (calm > 0.3) followMode = true;
         } else {
           calm = 0;
         }
+        // Never leave cursor-following locked out while the card is off-screen.
+        if (now - startedAt > 4200) followMode = true;
       } else {
-        // settled: leans toward the cursor with a springy overshoot
-        const accel = (attractAngle - angle) * 26 - velocity * 4.2;
+        // settled: strongly swings toward the cursor with visible overshoot
+        const accel = (attractAngle - angle) * 30 - velocity * 2.7;
         velocity += accel * dt;
         angle += velocity * dt;
       }
@@ -87,14 +90,19 @@ export function PendulumCard({ children, cordHeight = 90 }: { children: ReactNod
     };
 
     // follow the cursor anywhere on the page
+    let lastCursorX = window.innerWidth / 2;
     const globalMove = (x: number) => {
       if (pointerAngle !== null) return;
+      lastCursorX = x;
       const p = pivot();
       const dx = (x - p.x) / Math.max(window.innerWidth / 2, 1);
-      attractAngle = Math.max(-0.9, Math.min(0.9, dx)) * 0.85;
+      attractAngle = Math.max(-1, Math.min(1, dx)) * 1.05;
+      // Once the opening swing has played, cursor movement takes control immediately.
+      if (performance.now() - startedAt > 1800) followMode = true;
     };
     const onPointerMove = (e: PointerEvent) => globalMove(e.clientX);
     const onMouseMove = (e: MouseEvent) => globalMove(e.clientX);
+    const onScroll = () => globalMove(lastCursorX);
 
     card.addEventListener("pointerdown", down);
     card.addEventListener("pointermove", move);
@@ -102,6 +110,7 @@ export function PendulumCard({ children, cordHeight = 90 }: { children: ReactNod
     card.addEventListener("pointercancel", up);
     window.addEventListener("pointermove", onPointerMove, { passive: true });
     window.addEventListener("mousemove", onMouseMove, { passive: true });
+    window.addEventListener("scroll", onScroll, { passive: true });
 
     return () => {
       cancelAnimationFrame(raf);
@@ -111,6 +120,7 @@ export function PendulumCard({ children, cordHeight = 90 }: { children: ReactNod
       card.removeEventListener("pointercancel", up);
       window.removeEventListener("pointermove", onPointerMove);
       window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("scroll", onScroll);
     };
   }, [cordHeight]);
 
