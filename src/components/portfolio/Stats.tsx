@@ -1,5 +1,5 @@
 const metrics = [
-  { label: "Current GPA", value: "3.62", suffix: "/4.0" },
+  { label: "Current GPA", value: "7.1", suffix: "/10.0" },
   { label: "Projects Completed", value: "20+" },
   { label: "Professional Exp", value: "2", suffix: " Years" },
   { label: "Tech & Tools", value: "34+" },
