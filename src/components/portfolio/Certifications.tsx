@@ -1,7 +1,12 @@
+import * as React from "react";
+import { Download, ExternalLink, X } from "lucide-react";
+
 import { AnimatedText, ScrambleText } from "@/components/motion/AnimatedText";
 import { Magnetic } from "@/components/motion/Magnetic";
 import { Reveal, Stagger, StaggerItem } from "@/components/motion/Reveal";
 import { TiltCard } from "@/components/motion/TiltCard";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 type Cert = {
   title: string;
@@ -9,9 +14,58 @@ type Cert = {
   year: string;
   tag: string;
   accent: string;
+  pdf?: string;
 };
 
 const certs: Cert[] = [
+  {
+    title: "AWS Academy Graduate — Machine Learning Foundations",
+    issuer: "AWS Academy",
+    year: "2026",
+    tag: "Training Badge",
+    accent: "from-amber/25",
+    pdf: "/certs/cert-aws-academy-ml-foundations.pdf",
+  },
+  {
+    title: "AWS Academy Graduate — Cloud Foundations",
+    issuer: "AWS Academy",
+    year: "2026",
+    tag: "Training Badge",
+    accent: "from-accent/25",
+    pdf: "/certs/cert-aws-academy-cloud-foundations.pdf",
+  },
+  {
+    title: "Data Analytics Essentials",
+    issuer: "Cisco Networking Academy",
+    year: "2026",
+    tag: "Certificate",
+    accent: "from-emerald/25",
+    pdf: "/certs/cert-data-analytics-essentials.pdf",
+  },
+  {
+    title: "Learn Python From Scratch",
+    issuer: "Certified Program",
+    year: "2026",
+    tag: "Certificate",
+    accent: "from-accent/25",
+    pdf: "/certs/cert-learn-python-from-scratch.pdf",
+  },
+  {
+    title: "Programming: Beginner to Advanced",
+    issuer: "Accredited Curriculum",
+    year: "2026",
+    tag: "Certificate",
+    accent: "from-amber/25",
+    pdf: "/certs/cert-programming-beginner-to-advanced.pdf",
+  },
+  {
+    title: "Programming Fundamentals",
+    issuer: "Industry Standard Certification",
+    year: "2026",
+    tag: "Certificate",
+    accent: "from-emerald/25",
+    pdf: "/certs/cert-programming-fundamentals.pdf",
+  },
   { title: "Deep Learning Specialization", issuer: "BISA AI Academy", year: "2025", tag: "Completion Badge", accent: "from-accent/25" },
   { title: "AWS Educate — Getting Started with Databases", issuer: "Amazon Web Services", year: "2025", tag: "Training Badge", accent: "from-amber/25" },
   { title: "Machine Learning in Production", issuer: "DeepLearning.AI", year: "2024", tag: "Certificate", accent: "from-emerald/25" },
@@ -20,9 +74,159 @@ const certs: Cert[] = [
   { title: "Data Engineering with Python", issuer: "Coursera", year: "2023", tag: "Certificate", accent: "from-emerald/25" },
 ];
 
-export function Certifications() {
+function CertCardContent({
+  c,
+  hasPdf,
+  isActive,
+}: {
+  c: Cert;
+  hasPdf: boolean;
+  isActive: boolean;
+}) {
   return (
-    <section id="certifications" className="py-28 px-6 md:px-12 lg:px-20 relative">
+    <div
+      className={cn(
+        "h-full rounded-2xl border bg-surface/70 backdrop-blur-sm p-6 overflow-hidden group transition-all duration-300",
+        hasPdf && [
+          "cursor-pointer",
+          isActive
+            ? "border-accent/60 shadow-2xl shadow-accent/15 scale-[1.02] ring-2 ring-accent/20"
+            : "border-border hover:border-accent/40 hover:shadow-2xl hover:shadow-accent/10",
+        ],
+        !hasPdf && "border-border",
+      )}
+    >
+      <div
+        className={`h-28 rounded-xl bg-linear-to-br ${c.accent} to-transparent border border-border flex items-end p-3 transition-transform duration-500 group-hover:scale-[1.04]`}
+      >
+        <span className="font-mono text-[9px] uppercase tracking-[0.25em] text-muted-foreground">
+          {c.tag}
+        </span>
+      </div>
+      <h3 className="mt-5 text-lg font-bold tracking-tight leading-snug">{c.title}</h3>
+      <div className="mt-3 flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.2em] text-subtle">
+        <span>{c.issuer}</span>
+        <span className="text-accent">{c.year}</span>
+      </div>
+      {hasPdf && (
+        <div
+          className={cn(
+            "mt-4 flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.2em] transition-all duration-300",
+            isActive
+              ? "opacity-100 text-accent translate-y-0"
+              : "opacity-0 text-accent/80 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0",
+          )}
+        >
+          <span>{isActive ? "Viewing Now" : "View Certificate"}</span>
+          <span aria-hidden="true">{isActive ? "●" : "↗"}</span>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function PdfPanel({
+  cert,
+  onClose,
+}: {
+  cert: Cert;
+  onClose: () => void;
+}) {
+  if (!cert.pdf) return null;
+
+  const panelRef = React.useRef<HTMLDivElement | null>(null);
+
+  React.useEffect(() => {
+    const node = panelRef.current;
+    if (node && typeof node.scrollIntoView === "function") {
+      node.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, [cert.pdf]);
+
+  return (
+    <div
+      ref={panelRef}
+      className="mt-10 w-full rounded-3xl border border-border-strong bg-surface/80 p-4 backdrop-blur-xl shadow-2xl shadow-black/30 sm:p-6"
+    >
+      <div className="flex items-start justify-between gap-4 rounded-2xl border border-border bg-background/60 px-4 py-3 sm:px-5 sm:py-4">
+        <div className="min-w-0 flex flex-col">
+          <h3 className="truncate text-lg font-bold tracking-tight sm:text-xl">
+            {cert.title}
+          </h3>
+          <p className="mt-1 truncate font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground sm:text-xs">
+            {cert.issuer} · {cert.tag} · {cert.year}
+          </p>
+        </div>
+        <div className="flex items-center gap-2 shrink-0">
+          <Button asChild size="sm" variant="outline">
+            <a href={cert.pdf} target="_blank" rel="noopener noreferrer" className="gap-1.5">
+              <ExternalLink className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">New Tab</span>
+            </a>
+          </Button>
+          <Button asChild size="sm" variant="default">
+            <a href={cert.pdf} download className="gap-1.5">
+              <Download className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">Download</span>
+            </a>
+          </Button>
+          <Button
+            type="button"
+            size="sm"
+            variant="ghost"
+            onClick={onClose}
+            aria-label="Close preview"
+            className="h-9 w-9 p-0"
+          >
+            <X className="h-4 w-4" />
+            <span className="sr-only">Close</span>
+          </Button>
+        </div>
+      </div>
+
+      <div className="relative mt-4 h-[70vh] min-h-[520px] w-full overflow-hidden rounded-2xl border border-border bg-muted/50 shadow-inner">
+        <object
+          data={cert.pdf}
+          type="application/pdf"
+          className="h-full w-full"
+          aria-label={`${cert.title} — PDF viewer`}
+        >
+          <iframe
+            src={cert.pdf}
+            title={cert.title}
+            className="h-full w-full border-0"
+          />
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-background/95 p-8 text-center">
+            <p className="text-sm font-semibold">Your browser cannot preview this PDF inline.</p>
+            <div className="flex flex-wrap items-center justify-center gap-2">
+              <Button asChild size="sm" variant="default">
+                <a href={cert.pdf} download className="gap-1.5">
+                  <Download className="h-3.5 w-3.5" />
+                  Download PDF
+                </a>
+              </Button>
+              <Button asChild size="sm" variant="outline">
+                <a href={cert.pdf} target="_blank" rel="noopener noreferrer" className="gap-1.5">
+                  <ExternalLink className="h-3.5 w-3.5" />
+                  Open in New Tab
+                </a>
+              </Button>
+            </div>
+          </div>
+        </object>
+      </div>
+    </div>
+  );
+}
+
+export function Certifications() {
+  const [openCert, setOpenCert] = React.useState<Cert | null>(null);
+
+  return (
+    <section
+      id="certifications"
+      className="py-28 px-6 md:px-12 lg:px-20 relative"
+    >
       <div className="max-w-7xl mx-auto text-center">
         <Reveal kind="fade">
           <p className="font-mono text-[11px] font-bold uppercase tracking-[0.35em] text-muted-foreground">
@@ -31,12 +235,13 @@ export function Certifications() {
         </Reveal>
 
         <AnimatedText
-     as="h2"
-     text="Validating Excellence through Global Standards."
-     split="words"
-     stagger={0.05}
-     className="mt-6 block text-3xl sm:text-5xl md:text-6xl font-black tracking-tight leading-[1.05] "
-     itemClassName="text-metallic" />
+          as="h2"
+          text="Validating Excellence through Global Standards."
+          split="words"
+          stagger={0.05}
+          className="mt-6 block text-3xl sm:text-5xl md:text-6xl font-black tracking-tight leading-[1.05] "
+          itemClassName="text-metallic"
+        />
 
         <Reveal kind="up" delay={0.2}>
           <p className="mt-6 max-w-2xl mx-auto text-sm text-muted-foreground leading-relaxed">
@@ -49,38 +254,51 @@ export function Certifications() {
           <div className="mt-10 flex justify-center">
             <Magnetic strength={0.7}>
               <a
-                href="#projects"
+                href="#certifications"
                 className="inline-flex items-center gap-2 rounded-full bg-invert text-invert-foreground px-8 py-4 font-bold text-sm tracking-wide transition-transform hover:scale-105 active:scale-95"
               >
                 <ScrambleText text="View Credentials" />
-                <span aria-hidden="true">→</span>
+                <span aria-hidden="true">↓</span>
               </a>
             </Magnetic>
           </div>
         </Reveal>
 
-        <Stagger className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 text-left" stagger={0.09}>
+        <Stagger
+          className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 text-left"
+          stagger={0.09}
+        >
           {certs.map((c) => (
             <StaggerItem key={c.title}>
               <TiltCard max={9} lift={16}>
-                <article className="h-full rounded-2xl border border-border bg-surface/70 backdrop-blur-sm p-6 overflow-hidden group">
-                  <div
-                    className={`h-28 rounded-xl bg-linear-to-br ${c.accent} to-transparent border border-border flex items-end p-3 transition-transform duration-500 group-hover:scale-[1.04]`}
+                {c.pdf ? (
+                  <button
+                    type="button"
+                    onClick={() => setOpenCert(openCert?.pdf === c.pdf ? null : c)}
+                    aria-expanded={openCert?.pdf === c.pdf}
+                    className="block w-full text-left"
                   >
-                    <span className="font-mono text-[9px] uppercase tracking-[0.25em] text-muted-foreground">
-                      {c.tag}
-                    </span>
-                  </div>
-                  <h3 className="mt-5 text-lg font-bold tracking-tight leading-snug">{c.title}</h3>
-                  <div className="mt-3 flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.2em] text-subtle">
-                    <span>{c.issuer}</span>
-                    <span className="text-accent">{c.year}</span>
-                  </div>
-                </article>
+                    <CertCardContent
+                      c={c}
+                      hasPdf
+                      isActive={openCert?.pdf === c.pdf}
+                    />
+                  </button>
+                ) : (
+                  <CertCardContent c={c} hasPdf={false} isActive={false} />
+                )}
               </TiltCard>
             </StaggerItem>
           ))}
         </Stagger>
+
+        {openCert?.pdf && (
+          <div className="mt-8">
+            <Reveal kind="up" key={openCert.pdf}>
+              <PdfPanel cert={openCert} onClose={() => setOpenCert(null)} />
+            </Reveal>
+          </div>
+        )}
       </div>
     </section>
   );
