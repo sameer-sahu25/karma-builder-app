@@ -16,8 +16,8 @@ export function PendulumCard({ children, cordHeight = 90 }: { children: ReactNod
     if (!card || !wrap) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    let angle = 0.9; // released farther from the side for a stronger opening swing
-    let velocity = -0.35;
+    let angle = 0.22;
+    let velocity = 0.08;
     let pointerAngle: number | null = null;
     let attractAngle = 0; // target angle from global cursor position
     let followMode = false; // becomes true once the intro swing settles
@@ -36,8 +36,7 @@ export function PendulumCard({ children, cordHeight = 90 }: { children: ReactNod
         angle = next;
         calm = 0;
       } else if (!followMode) {
-        // free pendulum: gravity + light damping until it comes to rest
-        const accel = -12.5 * Math.sin(angle) - velocity * 0.72;
+        const accel = -7.5 * Math.sin(angle) - velocity * 0.55;
         velocity += accel * dt;
         angle += velocity * dt;
         if (Math.abs(angle) < 0.08 && Math.abs(velocity) < 0.42) {
@@ -58,7 +57,7 @@ export function PendulumCard({ children, cordHeight = 90 }: { children: ReactNod
       const deg = (angle * 180) / Math.PI;
       card.style.transform = `rotate(${deg.toFixed(3)}deg)`;
       if (cordRef.current) {
-        const unit = 100 / 320; // svg units per px
+        const unit = 100 / 320;
         cordRef.current.setAttribute("x2", `${50 + Math.sin(angle) * cordHeight * unit}`);
         cordRef.current.setAttribute("y2", `${Math.cos(angle) * cordHeight}`);
       }
@@ -97,7 +96,6 @@ export function PendulumCard({ children, cordHeight = 90 }: { children: ReactNod
       const p = pivot();
       const dx = (x - p.x) / Math.max(window.innerWidth / 2, 1);
       attractAngle = Math.max(-1, Math.min(1, dx)) * 1.05;
-      // Once the opening swing has played, cursor movement takes control immediately.
       if (performance.now() - startedAt > 1800) followMode = true;
     };
     const onPointerMove = (e: PointerEvent) => globalMove(e.clientX);
@@ -147,8 +145,8 @@ export function PendulumCard({ children, cordHeight = 90 }: { children: ReactNod
       </svg>
       <div
         ref={cardRef}
-        className={`origin-top touch-none select-none ${dragging ? "cursor-grabbing" : "cursor-grab"}`}
-        style={{ transformOrigin: `50% ${-cordHeight}px` }}
+        className={`touch-none select-none ${dragging ? "cursor-grabbing" : "cursor-grab"}`}
+        style={{ transformOrigin: `50% ${-cordHeight}px`, willChange: "transform" }}
         data-cursor="hover"
       >
         {children}

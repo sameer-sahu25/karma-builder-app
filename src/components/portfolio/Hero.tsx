@@ -25,7 +25,7 @@ function IdCard() {
       </motion.div>
 
       <PendulumCard>
-        <div className="w-[260px] sm:w-[300px] rounded-2xl border border-border-strong bg-surface/90 backdrop-blur-md p-5 shadow-2xl transition-transform duration-500 hover:scale-[1.03]">
+        <div className="w-[260px] sm:w-[300px] rounded-2xl border border-border-strong bg-surface/90 backdrop-blur-md p-5 shadow-2xl hover:scale-[1.03]">
           <div className="flex items-center justify-between font-mono text-[9px] uppercase tracking-[0.2em] text-subtle">
             <span>Dev ID</span>
             <span className="text-emerald">Active</span>
