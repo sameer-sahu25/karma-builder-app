@@ -26,15 +26,14 @@ The recent Sameer-authored commits used the malformed address
 used `sameer.sahu989826@gmail.com`. Commits created by automation use GitHub
 bot addresses and are not attributed to the personal account.
 
-The malformed commits remain in the published history. Rewriting them would
-require a coordinated history rewrite and force-push, so this change does not
-alter existing commit IDs. GitHub can attribute only future commits, and any
-past commits whose email is not verified on the account will remain
-unattributed unless history is deliberately rewritten.
+The 10 commits that used the malformed address were rewritten with the
+corrected email, along with their descendant commit IDs. The rewritten `main`
+history was force-pushed with `--force-with-lease` on 2026-09-20. GitHub can
+attribute these commits after the corrected email is verified on the account.
 
 ## Verification
 
-The next commit in this repository is a test commit. After it is pushed to
-`main`, check its commit page for the `sameer-sahu25` profile association and
-confirm that the contribution graph reflects it. GitHub may take a short time
-to refresh the graph.
+The rewritten `main` branch now points to commit `4ae8233`. Check a recent
+commit page for the `sameer-sahu25` profile association and confirm that the
+contribution graph reflects the corrected history. GitHub may take a short
+time to refresh the graph.
