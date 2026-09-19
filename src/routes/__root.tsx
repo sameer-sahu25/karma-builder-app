@@ -10,7 +10,6 @@ import {
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
-import { reportLovableError } from "../lib/lovable-error-reporting";
 
 function NotFoundComponent() {
   return (
@@ -35,10 +34,9 @@ function NotFoundComponent() {
 }
 
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
-  console.error(error);
   const router = useRouter();
   useEffect(() => {
-    reportLovableError(error, { boundary: "tanstack_root_error_component" });
+    console.error("Root boundary error:", error);
   }, [error]);
 
   return (
@@ -90,7 +88,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:site", content: "@sameersahu" },
     ],
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -103,7 +101,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: appCss,
       },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      {
+        rel: "icon",
+        type: "image/png",
+        sizes: "any",
+        href: "https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=minimalist%20professional%20monogram%20logo%20letters%20SS%20for%20Sameer%20Sahu%20AI%20machine%20learning%20engineer%2C%20deep%20navy%20indigo%20with%20electric%20violet%20accent%2C%20clean%20geometric%20swiss%20design%2C%20subtle%20neural%20network%20nodes%20integrated%20into%20letterforms%2C%20solid%20white%20background%2C%20high%20contrast%2C%20perfect%20square%20icon&image_size=square_hd",
+      },
+      {
+        rel: "apple-touch-icon",
+        href: "https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=minimalist%20professional%20monogram%20logo%20letters%20SS%20for%20Sameer%20Sahu%20AI%20machine%20learning%20engineer%2C%20deep%20navy%20indigo%20with%20electric%20violet%20accent%2C%20clean%20geometric%20swiss%20design%2C%20subtle%20neural%20network%20nodes%20integrated%20into%20letterforms%2C%20solid%20white%20background%2C%20high%20contrast%2C%20perfect%20square%20icon&image_size=square_hd",
+      },
     ],
   }),
   shellComponent: RootShell,
@@ -131,7 +138,6 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
     </QueryClientProvider>
   );
