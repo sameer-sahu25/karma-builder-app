@@ -1,0 +1,23 @@
+* text=auto eol=lf
+
+*.pdf    binary
+*.png    binary
+*.jpg    binary
+*.jpeg   binary
+*.gif    binary
+*.webp   binary
+*.ico    binary
+*.woff   binary
+*.woff2  binary
+*.ttf    binary
+*.eot    binary
+
+*.tsx    text diff=typescript
+*.ts     text diff=typescript
+*.jsx    text diff=javascript
+*.js     text diff=javascript
+*.json   text
+*.css    text
+*.md     text
+*.toml   text
+*.html   text
