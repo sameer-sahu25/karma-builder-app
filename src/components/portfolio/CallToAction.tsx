@@ -25,7 +25,10 @@ export function CallToAction() {
             <span>Hire Me</span>
           </Link>
           <a
-            href="#projects"
+            href="/sameersahuresume.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            type="application/pdf"
             className="inline-flex items-center space-x-2.5 px-7 py-3 rounded-full bg-surface border border-border-strong font-semibold text-sm hover:bg-muted transition-all hover:scale-105 active:scale-95 duration-200 shadow-xl"
           >
             <FileIcon className="w-4 h-4" />
