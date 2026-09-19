@@ -9,10 +9,15 @@ Date: 2026-09-20
 - Tracked branch: `main -> origin/main`
 - Repository-local author name: `sameer-sahu25`
 - Repository-local author email: `sameer.sahu989826@gmail.com`
+- Global author name: `sameer-sahu25`
+- Global author email: `sameer.sahu989826@gmail.com`
 
 The repository-local email is the correctly formatted address found in the
 existing history. It must be verified and added to the email addresses for the
 `sameer-sahu25` GitHub account for contribution attribution to work.
+
+Both the global Git identity and the repository-local identity were corrected
+from the malformed email to this address.
 
 ## History audit
 
