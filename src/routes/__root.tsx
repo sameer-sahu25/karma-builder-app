@@ -7,9 +7,13 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import { useCallback, useEffect, useState, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
+import { MobileBottomNav } from "@/components/mobile/MobileBottomNav";
+import { MobileSheetMenu } from "@/components/mobile/MobileSheetMenu";
+import { MobileNavProvider, useMobileNav } from "@/components/mobile/use-mobile-nav";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 function NotFoundComponent() {
   return (
@@ -74,7 +78,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   head: () => ({
     meta: [
       { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
+      { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
+      { name: "theme-color", content: "#0e0f11" },
       { title: "Sameer Sahu — AI & ML Engineer" },
       {
         name: "description",
@@ -119,6 +124,58 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   errorComponent: ErrorComponent,
 });
 
+function MobileNavShell() {
+  const isMobile = useIsMobile();
+  const { activeTab, setActiveTab, sheetOpen, openSheet, closeSheet } = useMobileNav();
+  const [theme, setTheme] = useState<"dark" | "light">("dark");
+
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    const apply = () => {
+      const isLight = document.documentElement.classList.contains("light");
+      setTheme(isLight ? "light" : "dark");
+    };
+    apply();
+    const obs = new MutationObserver(apply);
+    obs.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+    return () => obs.disconnect();
+  }, []);
+
+  const toggleTheme = useCallback(() => {
+    if (typeof document === "undefined") return;
+    const root = document.documentElement;
+    const next = root.classList.contains("light") ? "dark" : "light";
+    if (next === "light") root.classList.add("light");
+    else root.classList.remove("light");
+    try {
+      window.localStorage.setItem("theme", next);
+    } catch {
+      void 0;
+    }
+  }, []);
+
+  const toggleFullscreen = useCallback(() => {
+    if (typeof document === "undefined") return;
+    if (document.fullscreenElement) void document.exitFullscreen();
+    else void document.documentElement.requestFullscreen().catch(() => {});
+  }, []);
+
+  if (!isMobile) return null;
+
+  return (
+    <>
+      <MobileBottomNav activeTab={activeTab} onTabChange={setActiveTab} onOpenMore={openSheet} />
+      <MobileSheetMenu
+        open={sheetOpen}
+        onOpenChange={(v) => (v ? openSheet() : closeSheet())}
+        theme={theme}
+        onToggleTheme={toggleTheme}
+        onToggleFullscreen={toggleFullscreen}
+      />
+    </>
+  );
+}
+
 function RootShell({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
@@ -126,7 +183,10 @@ function RootShell({ children }: { children: ReactNode }) {
         <HeadContent />
       </head>
       <body>
-        {children}
+        <MobileNavProvider>
+          {children}
+          <MobileNavShell />
+        </MobileNavProvider>
         <Scripts />
       </body>
     </html>

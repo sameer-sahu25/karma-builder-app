@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { motion, type TargetAndTransition, type Variants } from "motion/react";
 
 type Kind = "fade" | "up" | "down" | "left" | "right" | "scale" | "rotate" | "blur";
@@ -41,12 +41,22 @@ export function Reveal({
   once?: boolean;
   className?: string;
 }) {
+  const [mounted, setMounted] = useState(false);
+  const [forcedShown, setForcedShown] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    const t = window.setTimeout(() => setForcedShown(true), 1400);
+    return () => window.clearTimeout(t);
+  }, []);
+
   return (
     <motion.div
       className={className}
       initial={hidden[kind]}
       whileInView={shown[kind]}
-      viewport={{ once, margin: "-10% 0px -8% 0px" }}
+      {...(mounted && forcedShown ? { animate: shown[kind] } : null)}
+      viewport={{ once, margin: "0px 0px 40% 0px" }}
       transition={{ duration, delay, ease: [0.22, 1, 0.36, 1] }}
     >
       {children}
@@ -74,6 +84,15 @@ export function Stagger({
   stagger?: number;
   className?: string;
 }) {
+  const [mounted, setMounted] = useState(false);
+  const [forcedShown, setForcedShown] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    const t = window.setTimeout(() => setForcedShown(true), 1600);
+    return () => window.clearTimeout(t);
+  }, []);
+
   return (
     <motion.div
       className={className}
@@ -81,7 +100,8 @@ export function Stagger({
       custom={stagger}
       initial="hidden"
       whileInView="shown"
-      viewport={{ once: true, margin: "-10% 0px" }}
+      {...(mounted && forcedShown ? { animate: "shown" } : null)}
+      viewport={{ once: true, margin: "0px 0px 45% 0px" }}
     >
       {children}
     </motion.div>

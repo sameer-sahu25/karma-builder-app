@@ -86,41 +86,58 @@ function CertCardContent({
   return (
     <div
       className={cn(
-        "h-full rounded-2xl border bg-surface/70 backdrop-blur-sm p-6 overflow-hidden group transition-all duration-300",
+        "min-h-[320px] rounded-2xl border-2 bg-surface/85 backdrop-blur-md p-6 overflow-hidden group transition-all duration-400 flex flex-col",
         hasPdf && [
           "cursor-pointer",
           isActive
-            ? "border-accent/60 shadow-2xl shadow-accent/15 scale-[1.02] ring-2 ring-accent/20"
-            : "border-border hover:border-accent/40 hover:shadow-2xl hover:shadow-accent/10",
+            ? "border-accent/70 shadow-2xl shadow-accent/20 scale-[1.02] ring-2 ring-accent/30 bg-surface/95"
+            : "border-border-strong hover:border-accent/50 hover:shadow-2xl hover:shadow-accent/15 hover:bg-surface/90",
         ],
-        !hasPdf && "border-border",
+        !hasPdf && [
+          "border-border-strong bg-surface/85 hover:border-border-strong",
+        ],
       )}
     >
       <div
-        className={`h-28 rounded-xl bg-linear-to-br ${c.accent} to-transparent border border-border flex items-end p-3 transition-transform duration-500 group-hover:scale-[1.04]`}
+        className={cn(
+          `h-28 sm:h-32 rounded-xl bg-linear-to-br ${c.accent} to-transparent border border-border flex items-end p-3 sm:p-4 transition-all duration-500 group-hover:scale-[1.03]`,
+          hasPdf && "group-hover:shadow-lg group-hover:shadow-black/20",
+        )}
       >
-        <span className="font-mono text-[9px] uppercase tracking-[0.25em] text-muted-foreground">
+        <span className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.25em] text-foreground/80 drop-shadow-sm">
           {c.tag}
         </span>
       </div>
-      <h3 className="mt-5 text-lg font-bold tracking-tight leading-snug">{c.title}</h3>
-      <div className="mt-3 flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.2em] text-subtle">
-        <span>{c.issuer}</span>
-        <span className="text-accent">{c.year}</span>
-      </div>
-      {hasPdf && (
-        <div
-          className={cn(
-            "mt-4 flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.2em] transition-all duration-300",
-            isActive
-              ? "opacity-100 text-accent translate-y-0"
-              : "opacity-0 text-accent/80 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0",
-          )}
-        >
-          <span>{isActive ? "Viewing Now" : "View Certificate"}</span>
-          <span aria-hidden="true">{isActive ? "●" : "↗"}</span>
+      <div className="flex-1 flex flex-col mt-5">
+        <h3 className="text-base sm:text-lg font-bold tracking-tight leading-snug min-h-[3.25rem] text-foreground">
+          {c.title}
+        </h3>
+        <div className="mt-auto pt-3 flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.2em] text-subtle">
+          <span className="min-w-0 truncate pr-2" title={c.issuer}>{c.issuer}</span>
+          <span className="text-accent shrink-0 font-semibold">{c.year}</span>
         </div>
-      )}
+      </div>
+      <div
+        className={cn(
+          "mt-4 flex items-center gap-1.5 font-mono text-[9px] sm:text-[10px] uppercase tracking-[0.2em] transition-all duration-300",
+          hasPdf && isActive
+            ? "opacity-100 text-accent translate-y-0"
+            : hasPdf
+              ? "opacity-70 text-accent/80 translate-y-0 group-hover:opacity-100 group-hover:text-accent"
+              : "opacity-60 text-subtle translate-y-0",
+        )}
+      >
+        <span>
+          {hasPdf
+            ? isActive
+              ? "Viewing Now"
+              : "View Certificate"
+            : "Credential Verified"}
+        </span>
+        <span aria-hidden="true" className={cn("transition-transform duration-300", hasPdf && "group-hover:translate-x-0.5")}>
+          {hasPdf ? (isActive ? "●" : "↗") : "✓"}
+        </span>
+      </div>
     </div>
   );
 }

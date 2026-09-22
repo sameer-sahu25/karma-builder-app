@@ -1,6 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ChevronDownIcon, ExpandIcon, FileIcon, GlobeIcon, MoonIcon, RobotIcon, SunIcon } from "./icons";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { useMobileNav } from "@/components/mobile/use-mobile-nav";
+import { ChevronDownIcon, ExpandIcon, FileIcon, GlobeIcon, MenuIcon, MoonIcon, RobotIcon, SunIcon } from "./icons";
 
 const aboutLinks = [
   { label: "Projects", detail: "Explore my latest builds", href: "#projects", icon: "↗" },
@@ -33,6 +35,8 @@ const toolButton =
 export function SiteNav() {
   const time = useClock();
   const [theme, setTheme] = useState<"dark" | "light">("dark");
+  const isMobile = useIsMobile();
+  const { openSheet } = useMobileNav();
 
   useEffect(() => {
     const stored = window.localStorage.getItem("theme");
@@ -56,6 +60,18 @@ export function SiteNav() {
           <span className="inline-block w-2 h-2 rounded-full bg-emerald mr-2 animate-ping align-middle" />
           <span>{time}</span>
         </div>
+
+        {isMobile && (
+          <button
+            type="button"
+            onClick={openSheet}
+            className={toolButton}
+            title="Open menu"
+            aria-label="Open menu"
+          >
+            <MenuIcon className="w-4 h-4" />
+          </button>
+        )}
 
         <div className="hidden sm:flex bg-surface/80 backdrop-blur-md border border-border p-1.5 rounded-full items-center space-x-1 shadow-lg">
           <Link
