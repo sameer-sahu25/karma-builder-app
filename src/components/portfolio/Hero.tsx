@@ -20,7 +20,7 @@ function IdCard() {
         transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
       >
         <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-accent bg-accent/10 border border-accent/30 px-3 py-1 rounded-full">
-          ✦ <ScrambleText text="MOVE YOUR CURSOR — THE CARD FOLLOWS" /> ✦
+          ✦ <ScrambleText text="SUCCES IS THE SUM OF SMALL EFFORTS Repeated DAY IN AND DAY OUT " /> ✦
         </span>
       </motion.div>
 
@@ -47,7 +47,7 @@ function IdCard() {
                 />
               ))}
             </div>
-            <span className="font-signature text-2xl text-muted-foreground">Azril</span>
+            <span className="font-signature text-2xl text-muted-foreground">Sameer</span>
           </div>
         </div>
       </PendulumCard>
