@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 import { useReveal } from "@/hooks/use-reveal";
 import { SmoothScroll } from "@/components/motion/SmoothScroll";
@@ -62,13 +64,54 @@ function ScrollProgress() {
   );
 }
 
+const forceEverythingVisible = () => {
+  try {
+    const reveals = Array.from(document.querySelectorAll<HTMLElement>(".reveal"));
+    reveals.forEach((n) => n.classList.add("is-revealed"));
+  } catch {
+    /* no-op */
+  }
+  try {
+    gsap.registerPlugin(ScrollTrigger);
+  } catch {
+    /* no-op */
+  }
+  try {
+    ScrollTrigger.refresh();
+  } catch {
+    /* no-op */
+  }
+  try {
+    document.body.style.overflow = "";
+    document.documentElement.style.overflow = "";
+  } catch {
+    /* no-op */
+  }
+};
+
 function Index() {
   useReveal();
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const id1 = window.setTimeout(forceEverythingVisible, 500);
+    const id2 = window.setTimeout(forceEverythingVisible, 1500);
+    const id3 = window.setTimeout(forceEverythingVisible, 4000);
+    return () => {
+      window.clearTimeout(id1);
+      window.clearTimeout(id2);
+      window.clearTimeout(id3);
+    };
+  }, []);
+
+  const handlePreloaderDone = () => {
+    forceEverythingVisible();
+  };
 
   return (
     <div className="relative min-h-screen bg-background text-foreground selection:bg-invert selection:text-invert-foreground">
       <SmoothScroll />
-      <Preloader />
+      <Preloader onDone={handlePreloaderDone} />
       <CustomCursor />
       <ScrollProgress />
 
