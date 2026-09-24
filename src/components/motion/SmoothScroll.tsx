@@ -1,31 +1,53 @@
 import { useEffect } from "react";
 import Lenis from "lenis";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 let lenisInstance: Lenis | null = null;
+let gsapRegistered = false;
 
 export function getLenis() {
   return lenisInstance;
 }
 
-/** Inertial smooth scrolling (Lenis) synced to rAF. */
 export function SmoothScroll() {
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (typeof window === "undefined") return;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (!gsapRegistered) {
+      gsap.registerPlugin(ScrollTrigger);
+      gsapRegistered = true;
+    }
+
+    ScrollTrigger.defaults({
+      toggleActions: reduced ? "play none none none" : "play none none reverse",
+    });
 
     const lenis = new Lenis({
-      duration: 1.15,
+      duration: reduced ? 0.01 : 1.15,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      smoothWheel: true,
-      touchMultiplier: 1.6,
+      smoothWheel: !reduced,
+      touchMultiplier: reduced ? 1 : 1.6,
     });
     lenisInstance = lenis;
 
-    let raf = 0;
-    const loop = (time: number) => {
-      lenis.raf(time);
-      raf = requestAnimationFrame(loop);
+    const rafTicker = (time: number) => {
+      lenis.raf(time * 1000);
     };
-    raf = requestAnimationFrame(loop);
+    gsap.ticker.add(rafTicker);
+    gsap.ticker.lagSmoothing(reduced ? 500 : 1000, 16);
+
+    lenis.on("scroll", ScrollTrigger.update);
+    ScrollTrigger.config({ ignoreMobileResize: true });
+    const refresh = () => ScrollTrigger.refresh();
+    window.addEventListener("load", refresh);
+    const refreshId = window.setTimeout(refresh, 250);
+    const refreshLateId = window.setTimeout(refresh, 3000);
+    const onVisible = () => {
+      if (document.visibilityState === "visible") refresh();
+    };
+    document.addEventListener("visibilitychange", onVisible);
 
     const onAnchor = (e: MouseEvent) => {
       const target = (e.target as HTMLElement | null)?.closest?.('a[href^="#"]') as HTMLAnchorElement | null;
@@ -41,7 +63,12 @@ export function SmoothScroll() {
 
     return () => {
       document.removeEventListener("click", onAnchor);
-      cancelAnimationFrame(raf);
+      document.removeEventListener("visibilitychange", onVisible);
+      window.removeEventListener("load", refresh);
+      window.clearTimeout(refreshId);
+      window.clearTimeout(refreshLateId);
+      lenis.off("scroll", ScrollTrigger.update);
+      gsap.ticker.remove(rafTicker);
       lenis.destroy();
       lenisInstance = null;
     };
