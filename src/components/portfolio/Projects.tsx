@@ -1,8 +1,10 @@
+import { useEffect, useRef } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
 import { Magnetic } from "@/components/motion/Magnetic";
-import { Stagger, StaggerItem } from "@/components/motion/Reveal";
 import { TiltCard } from "@/components/motion/TiltCard";
 import { GithubIcon } from "./icons";
-
 
 function ProjectVisual({ mark, stack }: { mark: string; stack: string[] }) {
   return (
@@ -79,8 +81,58 @@ const projects: Project[] = [
 ];
 
 export function Projects() {
+  const rootRef = useRef<HTMLElement | null>(null);
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const root = rootRef.current;
+    if (!root) return;
+
+    try {
+      gsap.registerPlugin(ScrollTrigger);
+    } catch {
+      /* ignore double registration */
+    }
+
+    const ctx = gsap.context(() => {
+      const cards = cardRefs.current.filter((c): c is HTMLDivElement => c !== null);
+      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      if (reduced) {
+        cards.forEach((c) => {
+          gsap.set(c, { clearProps: "all" });
+        });
+        return;
+      }
+
+      gsap.set(cards, { opacity: 0, y: 60 });
+
+      cards.forEach((card, i) => {
+        gsap.to(card, {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: "power3.out",
+          delay: i * 0.1,
+          scrollTrigger: {
+            trigger: card,
+            start: "top 85%",
+            once: true,
+          },
+        });
+      });
+    }, root);
+
+    return () => ctx.revert();
+  }, []);
+
+  const setCardRef = (i: number) => (el: HTMLDivElement | null) => {
+    cardRefs.current[i] = el;
+  };
+
   return (
-    <section id="projects" className="py-24 px-6 md:px-12 lg:px-20 relative">
+    <section ref={rootRef} id="projects" className="py-24 px-6 md:px-12 lg:px-20 relative">
       <div className="max-w-7xl mx-auto">
         <div className="mb-12 flex items-center justify-between gap-4 reveal">
           <h2 className="font-mono text-xs font-bold uppercase tracking-[0.25em] text-muted-foreground">
@@ -89,9 +141,13 @@ export function Projects() {
           <span className="font-mono text-xs text-subtle">2024 — 2026</span>
         </div>
 
-        <Stagger className="space-y-12" stagger={0.14}>
-          {projects.map((p) => (
-            <StaggerItem key={p.title}>
+        <div className="flex flex-col gap-12">
+          {projects.map((p, i) => (
+            <div
+              key={p.title}
+              ref={setCardRef(i)}
+              className="w-full"
+            >
               <TiltCard max={6} lift={18}>
                 <article className="interactive-card bg-invert text-invert-foreground rounded-sm p-6 sm:p-10 shadow-2xl group">
                   <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
@@ -102,17 +158,17 @@ export function Projects() {
                           {p.category}
                         </p>
                       </div>
-                      <p className="font-mono text-xs text-zinc-600 tracking-wide">{p.blurb}</p>
+                      <p className="font-mono text-xs text-zinc-600 tracking-wide">
+                        {p.blurb}
+                      </p>
                     </div>
 
-                    <div className="lg:col-span-4 transition-transform duration-500 group-hover:scale-[1.06]">
+                    <div className="lg:col-span-4">
                       <ProjectVisual mark={p.mark} stack={p.stack} />
                     </div>
 
                     <div className="lg:col-span-4 flex flex-col justify-between self-stretch text-left lg:text-right">
-                      <h3
-                        className={`text-2xl sm:text-3xl font-bold tracking-tight uppercase leading-tight transition-colors ${p.hover}`}
-                      >
+                      <h3 className={`text-2xl sm:text-3xl font-bold tracking-tight uppercase leading-tight transition-colors ${p.hover}`}>
                         {p.title}
                       </h3>
                       <div className="mt-6 lg:mt-0 flex items-center justify-between lg:justify-end lg:space-x-8">
@@ -132,10 +188,9 @@ export function Projects() {
                   </div>
                 </article>
               </TiltCard>
-            </StaggerItem>
+            </div>
           ))}
-        </Stagger>
-
+        </div>
 
         <div className="mt-16 flex flex-wrap gap-4 items-center justify-between pt-6 border-t border-border reveal">
           <div className="flex items-center space-x-4">
