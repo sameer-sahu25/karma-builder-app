@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { forwardRef, useCallback, useEffect, useRef, useState } from "react";
 
 export type CubeFace = {
   label: string;
@@ -99,7 +99,7 @@ const transforms = [
   `rotateX(-90deg) translateZ(${HALF}px)`,
 ];
 
-export function Cube3D({ faces }: { faces: CubeFace[] }) {
+export const Cube3D = forwardRef<HTMLDivElement, { faces: CubeFace[] }>(function Cube3D({ faces }, ref) {
   const [angle, setAngle] = useState<{ x: number; y: number } | null>(null);
   const drag = useRef<{ id: number; x: number; y: number; ax: number; ay: number } | null>(null);
   const stageRef = useRef<HTMLDivElement>(null);
@@ -130,9 +130,9 @@ export function Cube3D({ faces }: { faces: CubeFace[] }) {
 
   useEffect(() => () => void (drag.current = null), []);
 
-  // cursor-anywhere tilt: the cube leans toward the pointer wherever it moves on the page
   const tiltRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
+    if (typeof window === "undefined") return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     let tx = 0;
     let ty = 0;
@@ -170,45 +170,52 @@ export function Cube3D({ faces }: { faces: CubeFace[] }) {
       ref={stageRef}
       className="cube-stage animate-float-slow relative select-none touch-none cursor-grab active:cursor-grabbing"
       data-dragging={dragging}
-      style={{ width: SIZE, height: SIZE }}
+      style={{ width: SIZE, height: SIZE, perspective: "1400px" }}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={endDrag}
       onPointerCancel={endDrag}
     >
       <div
-        ref={tiltRef}
+        ref={ref}
+        className="cube-scroll-rotator"
         style={{ width: SIZE, height: SIZE, transformStyle: "preserve-3d", willChange: "transform" }}
       >
-      <div
-        className="cube-3d"
-        style={{
-          width: SIZE,
-          height: SIZE,
-          ...(angle
-            ? { animation: "none", transform: `rotateX(${angle.x}deg) rotateY(${angle.y}deg)` }
-            : {}),
-        }}
-      >
-        {faces.slice(0, 6).map((face, i) => (
+        <div
+          ref={tiltRef}
+          style={{ width: SIZE, height: SIZE, transformStyle: "preserve-3d", willChange: "transform" }}
+        >
           <div
-            key={face.label + i}
-            className="cube-face"
+            className="cube-3d"
             style={{
-              transform: transforms[i],
-              background: `linear-gradient(140deg, ${face.from}, ${face.to})`,
+              width: SIZE,
+              height: SIZE,
+              transformStyle: "preserve-3d",
+              ...(angle
+                ? { animation: "none", transform: `rotateX(${angle.x}deg) rotateY(${angle.y}deg)` }
+                : {}),
             }}
           >
-            <FaceIcon name={face.icon} />
-            <span
-              className="absolute bottom-5 right-4 px-3 py-1.5 rounded-md bg-black/75 text-[11px] font-mono font-bold tracking-[0.25em] text-white/90"
-              style={{ writingMode: "vertical-rl" }}
-            >
-              {face.label}
-            </span>
+            {faces.slice(0, 6).map((face, i) => (
+              <div
+                key={face.label + i}
+                className="cube-face"
+                style={{
+                  transform: transforms[i],
+                  background: `linear-gradient(140deg, ${face.from}, ${face.to})`,
+                }}
+              >
+                <FaceIcon name={face.icon} />
+                <span
+                  className="absolute bottom-5 right-4 px-3 py-1.5 rounded-md bg-black/75 text-[11px] font-mono font-bold tracking-[0.25em] text-white/90"
+                  style={{ writingMode: "vertical-rl" }}
+                >
+                  {face.label}
+                </span>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+        </div>
       </div>
       <div
         className="absolute left-1/2 -translate-x-1/2 rounded-[50%] blur-2xl bg-black/70"
@@ -217,4 +224,4 @@ export function Cube3D({ faces }: { faces: CubeFace[] }) {
       />
     </div>
   );
-}
+});
