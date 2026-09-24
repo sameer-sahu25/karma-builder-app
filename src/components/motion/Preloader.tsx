@@ -8,37 +8,90 @@ export function Preloader({ onDone }: { onDone?: () => void }) {
   const [open, setOpen] = useState(true);
 
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    if (typeof window === "undefined") return;
+
+    const finish = () => {
       setOpen(false);
-      onDone?.();
-      return;
+      try {
+        document.body.style.overflow = "";
+      } catch {
+        /* no-op */
+      }
+      try {
+        onDone?.();
+      } catch {
+        /* no-op */
+      }
+    };
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setCount(100);
+      finish();
+      return undefined;
     }
-    document.body.style.overflow = "hidden";
+
+    try {
+      document.body.style.overflow = "hidden";
+    } catch {
+      /* no-op */
+    }
+
+    let cancelled = false;
     let value = 0;
-    const id = window.setInterval(() => {
+    let intervalId: number | undefined;
+
+    const HARD_TIMEOUT_MS = 2800;
+    const safetyTimeoutId = window.setTimeout(() => {
+      if (cancelled) return;
+      cancelled = true;
+      if (intervalId !== undefined) window.clearInterval(intervalId);
+      setCount(100);
+      window.setTimeout(finish, 200);
+    }, HARD_TIMEOUT_MS);
+
+    intervalId = window.setInterval(() => {
+      if (cancelled) return;
       value = Math.min(100, value + Math.random() * 9 + 3);
       setCount(Math.round(value));
       if (value >= 100) {
-        window.clearInterval(id);
-        window.setTimeout(() => {
-          setOpen(false);
-          document.body.style.overflow = "";
-          onDone?.();
-        }, 450);
+        cancelled = true;
+        if (intervalId !== undefined) window.clearInterval(intervalId);
+        window.clearTimeout(safetyTimeoutId);
+        window.setTimeout(finish, 450);
       }
     }, 90);
+
     return () => {
-      window.clearInterval(id);
-      document.body.style.overflow = "";
+      cancelled = true;
+      if (intervalId !== undefined) window.clearInterval(intervalId);
+      window.clearTimeout(safetyTimeoutId);
+      try {
+        document.body.style.overflow = "";
+      } catch {
+        /* no-op */
+      }
     };
   }, [onDone]);
 
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    const t = window.setTimeout(() => {
+      try {
+        document.documentElement.dataset["preloaded"] = "true";
+      } catch {
+        /* no-op */
+      }
+    }, 3200);
+    return () => window.clearTimeout(t);
+  }, []);
+
   return (
-    <AnimatePresence>
+    <AnimatePresence mode="wait">
       {open && (
         <motion.div
           key="preloader"
           className="fixed inset-0 z-[200] bg-background flex flex-col items-center justify-center"
+          initial={{ clipPath: "inset(0% 0% 0% 0%)" }}
           exit={{ clipPath: "inset(0% 0% 100% 0%)" }}
           transition={{ duration: 0.9, ease: [0.76, 0, 0.24, 1] }}
         >
