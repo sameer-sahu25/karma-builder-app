@@ -1,3 +1,6 @@
+import { useEffect, useRef } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 type Pill = { name: string; mark: React.ReactNode };
 
@@ -96,11 +99,15 @@ function PillRow({
   className,
   direction = "left",
   duration = 40,
+  pillRefs,
+  rowIndex,
 }: {
   pills: Pill[];
   className?: string;
   direction?: "left" | "right";
   duration?: number;
+  pillRefs: React.MutableRefObject<HTMLDivElement[]>;
+  rowIndex: number;
 }) {
   const loop = [...pills, ...pills];
 
@@ -116,7 +123,13 @@ function PillRow({
         {loop.map((pill, i) => (
           <div
             key={`${pill.name}-${i}`}
-            className="shrink-0 select-none flex items-center space-x-2.5 p-2 rounded-xl bg-surface-2/70 border border-border hover:border-border-strong hover:-translate-y-0.5 transition-all duration-300"
+            ref={(el) => {
+              if (el) {
+                const idx = rowIndex * 100 + i;
+                pillRefs.current[idx] = el;
+              }
+            }}
+            className="shrink-0 select-none flex items-center space-x-2.5 p-2 rounded-xl bg-surface-2/70 border border-border hover:border-border-strong transition-colors duration-300"
           >
             {pill.mark}
             <span className="text-sm font-semibold tracking-tight text-foreground/85 whitespace-nowrap">
@@ -130,15 +143,127 @@ function PillRow({
 }
 
 export function TechStack() {
+  const rootRef = useRef<HTMLElement | null>(null);
+  const pillRefs = useRef<HTMLDivElement[]>([]);
+  const titleLineRef = useRef<SVGPathElement | null>(null);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const root = rootRef.current;
+    if (!root) return;
+
+    try {
+      gsap.registerPlugin(ScrollTrigger);
+    } catch {
+      /* ignore double registration */
+    }
+
+    const allPills = pillRefs.current.filter(Boolean);
+
+    const ctx = gsap.context(() => {
+      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      if (!reduced) {
+        gsap.set(allPills, { opacity: 0, y: 20, filter: "blur(6px)" });
+
+        ScrollTrigger.create({
+          trigger: root,
+          start: "top 70%",
+          once: true,
+          onEnter: () => {
+            gsap.to(allPills, {
+              opacity: 1,
+              y: 0,
+              filter: "blur(0px)",
+              stagger: 0.04,
+              duration: 0.6,
+              ease: "power3.out",
+            });
+          },
+        });
+
+        const titleLine = titleLineRef.current;
+        if (titleLine) {
+          const pathLength = titleLine.getTotalLength?.() ?? 300;
+          gsap.set(titleLine, {
+            strokeDasharray: pathLength,
+            strokeDashoffset: pathLength,
+          });
+          ScrollTrigger.create({
+            trigger: root,
+            start: "top 75%",
+            once: true,
+            onEnter: () => {
+              gsap.to(titleLine, {
+                strokeDashoffset: 0,
+                duration: 1.1,
+                ease: "power3.inOut",
+              });
+            },
+          });
+        }
+      }
+    }, root);
+
+    allPills.forEach((pill) => {
+      const handleEnter = () => {
+        gsap.to(pill, {
+          rotateZ: 15,
+          scale: 1.06,
+          y: -4,
+          duration: 0.35,
+          ease: "back.out(2)",
+        });
+      };
+      const handleLeave = () => {
+        gsap.to(pill, {
+          rotateZ: 0,
+          scale: 1,
+          y: 0,
+          duration: 0.3,
+          ease: "power3.out",
+        });
+      };
+      pill.addEventListener("mouseenter", handleEnter);
+      pill.addEventListener("mouseleave", handleLeave);
+
+      ctx.add(() => {
+        pill.removeEventListener("mouseenter", handleEnter);
+        pill.removeEventListener("mouseleave", handleLeave);
+      });
+    });
+
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <section id="tech-stack" className="py-20 px-6 md:px-12 lg:px-20 border-t border-border">
+    <section ref={rootRef} id="tech-stack" className="py-20 px-6 md:px-12 lg:px-20 border-t border-border">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-16 items-start">
-          <h2 className="lg:col-span-7 text-2xl sm:text-4xl font-bold tracking-tight leading-snug reveal">
-            Architecting Scalable Systems
-            <br />
-            Where Intelligence Meets Engineering.
-          </h2>
+          <div className="lg:col-span-7">
+            <h2 className="text-2xl sm:text-4xl font-bold tracking-tight leading-snug reveal inline-block">
+              Architecting Scalable Systems
+              <br />
+              Where Intelligence Meets Engineering.
+            </h2>
+            <svg className="mt-2 w-full max-w-md" viewBox="0 0 400 6" fill="none" aria-hidden="true">
+              <path
+                ref={titleLineRef}
+                d="M2 3 L398 3"
+                stroke="url(#techTitleGradient)"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
+              <defs>
+                <linearGradient id="techTitleGradient" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="currentColor" stopOpacity="0" />
+                  <stop offset="20%" stopColor="rgb(251 191 36)" />
+                  <stop offset="80%" stopColor="rgb(56 189 248)" />
+                  <stop offset="100%" stopColor="currentColor" stopOpacity="0" />
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
           <p
             className="lg:col-span-5 text-xs sm:text-sm text-muted-foreground leading-relaxed reveal"
             style={{ "--delay": "0.15s" } as React.CSSProperties}
@@ -159,12 +284,14 @@ export function TechStack() {
           </span>
         </div>
 
-        <PillRow pills={rowOne} className="py-4" direction="left" duration={32} />
+        <PillRow pills={rowOne} className="py-4" direction="left" duration={32} pillRefs={pillRefs} rowIndex={0} />
         <PillRow
           pills={rowTwo}
           className="pt-6 mt-6 border-t border-border"
           direction="right"
           duration={38}
+          pillRefs={pillRefs}
+          rowIndex={1}
         />
       </div>
     </section>
