@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState } from "react";
-import { motion, useScroll, useSpring, useTransform } from "motion/react";
+import { useEffect, useRef } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 import { AnimatedText } from "@/components/motion/AnimatedText";
 import { Reveal } from "@/components/motion/Reveal";
@@ -66,40 +67,96 @@ const roles: Role[] = [
   },
 ];
 
-
 export function Journey() {
   const sectionRef = useRef<HTMLElement>(null);
-  const trackRef = useRef<HTMLOListElement>(null);
-  const [distance, setDistance] = useState(0);
+  const railLineRef = useRef<SVGPathElement>(null);
+  const railDotRef = useRef<HTMLSpanElement>(null);
+  const cardsRef = useRef<HTMLElement[]>([]);
 
   useEffect(() => {
-    const measure = () => {
-      const track = trackRef.current;
-      if (!track) return;
-      setDistance(Math.max(0, track.scrollWidth - window.innerWidth + 48));
-    };
-    measure();
-    window.addEventListener("resize", measure);
-    return () => window.removeEventListener("resize", measure);
+    if (typeof window === "undefined") return;
+    const section = sectionRef.current;
+    if (!section) return;
+
+    try {
+      gsap.registerPlugin(ScrollTrigger);
+    } catch {
+      /* ignore double registration */
+    }
+
+    const ctx = gsap.context(() => {
+      gsap.set(railLineRef.current, { strokeDashoffset: 1 });
+
+      ScrollTrigger.create({
+        trigger: section,
+        start: "top 80%",
+        once: true,
+        onEnter: () => {
+          gsap.to(railLineRef.current, {
+            strokeDashoffset: 0,
+            duration: 1.2,
+            ease: "power2.out",
+          });
+        },
+      });
+
+      if (railDotRef.current) {
+        gsap.set(railDotRef.current, { yPercent: 0 });
+
+        ScrollTrigger.create({
+          trigger: section,
+          start: "top 80%",
+          once: true,
+          onEnter: () => {
+            gsap.to(railDotRef.current, {
+              yPercent: 100,
+              duration: 1.4,
+              ease: "power2.inOut",
+            });
+          },
+        });
+      }
+
+      if (cardsRef.current.length) {
+        gsap.set(cardsRef.current, { y: 24, opacity: 0, filter: "blur(8px)" });
+
+        ScrollTrigger.create({
+          trigger: section,
+          start: "top 85%",
+          once: true,
+          onEnter: () => {
+            gsap.to(cardsRef.current, {
+              y: 0,
+              opacity: 1,
+              filter: "blur(0px)",
+              stagger: 0.1,
+              duration: 0.8,
+              ease: "power3.out",
+            });
+          },
+        });
+      }
+    }, section);
+
+    return () => ctx.revert();
   }, []);
 
-  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start start", "end end"] });
-  const eased = useSpring(scrollYProgress, { stiffness: 90, damping: 26, mass: 0.4 });
-  const x = useTransform(eased, [0, 1], [24, -distance]);
-  const lineScale = useTransform(eased, [0, 1], [0.05, 1]);
+  const registerCard = (el: HTMLElement | null, i: number) => {
+    if (el) cardsRef.current[i] = el;
+  };
 
   return (
-    <section id="journey" ref={sectionRef} className="relative" style={{ height: "520vh" }}>
-
-      <div className="sticky top-0 h-screen overflow-hidden flex flex-col justify-center">
-        <div className="px-6 md:px-12 lg:px-20 max-w-7xl mx-auto w-full">
+    <section id="journey" ref={sectionRef} className="relative py-28 px-6 md:px-12 lg:px-20">
+      <div className="max-w-7xl mx-auto w-full">
+        <div className="mb-16">
           <AnimatedText
-      as="h2"
-      text="Professional Journey"
-      split="chars"
-      stagger={0.025}
-      className="hero-title block text-4xl sm:text-6xl md:text-7xl"
-      itemClassName="text-metallic" />
+            as="h2"
+            text="Professional Journey"
+            split="chars"
+            stagger={0.025}
+            className="hero-title block text-4xl sm:text-6xl md:text-7xl"
+            itemClassName="text-metallic"
+          />
           <Reveal kind="up" delay={0.15}>
             <p className="mt-4 max-w-md text-sm text-muted-foreground leading-relaxed">
               A timeline of roles, responsibilities, and professional growth across various organizations.
@@ -107,35 +164,59 @@ export function Journey() {
           </Reveal>
         </div>
 
-        <div className="relative mt-16">
-          <div className="absolute left-0 right-0 top-1/2 h-px bg-border" aria-hidden="true" />
-          <motion.div
-            className="absolute left-0 right-0 top-1/2 h-px origin-left bg-linear-to-r from-accent via-foreground to-amber"
-            style={{ scaleX: lineScale }}
-            aria-hidden="true"
-          />
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 relative">
+          <div className="md:col-span-2 flex md:justify-end">
+            <div
+              className="relative hidden md:flex flex-col items-center"
+              style={{ position: "sticky", top: "20vh", height: "60vh" }}
+            >
+              <svg width="40" height="100%" viewBox="0 0 40 100" preserveAspectRatio="none" className="h-full">
+                <path
+                  ref={railLineRef}
+                  d="M 20 0 V 100"
+                  fill="none"
+                  stroke="currentColor"
+                  className="text-border-strong"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  pathLength={1}
+                  style={{ strokeDasharray: "1 1", strokeDashoffset: 1 }}
+                />
+              </svg>
+              <span
+                ref={railDotRef}
+                className="absolute left-1/2 -translate-x-1/2 w-3.5 h-3.5 rounded-full bg-accent shadow-[0_0_15px_rgba(56,189,248,0.7)] border-2 border-background z-10"
+                style={{ top: 0 }}
+              />
+            </div>
+          </div>
 
-          <motion.ol ref={trackRef} className="flex items-center gap-0 list-none w-max" style={{ x }}>
+          <div className="md:col-span-10 space-y-8 md:space-y-12">
             {roles.map((role, i) => (
-              <li key={role.title} className="relative shrink-0 w-[340px] sm:w-[420px] group">
-                <div className="flex items-center">
-                  <span className="w-3.5 h-3.5 rounded-full bg-surface-2 border border-border-strong shrink-0 transition-all duration-300 group-hover:bg-foreground group-hover:scale-125" />
-                  <span className="h-px flex-1 bg-transparent" />
-                </div>
-
-                <div className={i % 2 === 0 ? "pt-6 pl-6" : "absolute bottom-8 left-6 pr-6"}>
-                  <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-muted-foreground transition-colors duration-300 group-hover:text-foreground">
-                    {role.title}
-                  </h3>
-                  <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-subtle mt-2">{role.period}</p>
-                  <div className="mt-3 max-w-[320px] overflow-hidden max-h-0 opacity-0 transition-all duration-500 group-hover:max-h-40 group-hover:opacity-100">
-                    <p className="text-xs text-muted-foreground leading-relaxed">{role.summary}</p>
-                    <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-accent mt-2">{role.org}</p>
+              <article
+                key={role.title}
+                ref={(el) => registerCard(el, i)}
+                className="group relative rounded-2xl border border-border bg-surface/80 backdrop-blur-md p-6 sm:p-8 hover:border-border-strong transition-colors duration-300"
+              >
+                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+                  <div className="flex-1">
+                    <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-muted-foreground transition-colors duration-300 group-hover:text-foreground">
+                      {role.title}
+                    </h3>
+                    <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-subtle mt-2">
+                      {role.period}
+                    </p>
+                    <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-accent mt-1">
+                      {role.org}
+                    </p>
                   </div>
                 </div>
-              </li>
+                <p className="mt-4 text-sm text-muted-foreground leading-relaxed">
+                  {role.summary}
+                </p>
+              </article>
             ))}
-          </motion.ol>
+          </div>
         </div>
       </div>
     </section>
