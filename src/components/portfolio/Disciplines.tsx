@@ -1,3 +1,6 @@
+import { useEffect, useRef } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Cube3D, type CubeFace } from "./Cube3D";
 
 type Tone = "accent" | "amber" | "danger";
@@ -67,35 +70,159 @@ const toneTag: Record<Tone, string> = {
   danger: "hover:border-danger",
 };
 
+type CubeRefs = {
+  cube: React.MutableRefObject<HTMLDivElement | null>;
+  row: React.MutableRefObject<HTMLDivElement | null>;
+  titleWords: React.MutableRefObject<HTMLSpanElement[]>;
+  tags: React.MutableRefObject<HTMLSpanElement[]>;
+};
 
 export function Disciplines() {
+  const rootRef = useRef<HTMLElement>(null);
+  const cubeRefs = useRef<CubeRefs[]>(
+    disciplines.map(() => ({
+      cube: { current: null },
+      row: { current: null },
+      titleWords: { current: [] },
+      tags: { current: [] },
+    })),
+  );
+
+  const assignCubeRef = (i: number) => (el: HTMLDivElement | null) => {
+    const refs = cubeRefs.current[i];
+    if (refs) refs.cube.current = el;
+  };
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      gsap.registerPlugin(ScrollTrigger);
+    } catch (_) {
+      // no-op
+    }
+
+    const ctx = gsap.context(() => {
+      cubeRefs.current.forEach((refs) => {
+        if (refs.cube.current) {
+          gsap.set(refs.cube.current, {
+            rotateX: -6,
+            rotateY: -12,
+            translateZ: 20,
+            transformStyle: "preserve-3d",
+          });
+        }
+      });
+
+      cubeRefs.current.forEach((refs, i) => {
+        ScrollTrigger.create({
+          trigger: refs.row.current,
+          start: "top 80%",
+          once: true,
+          onEnter: () => {
+            gsap.fromTo(
+              refs.row.current,
+              { opacity: 0, y: 36 },
+              { opacity: 1, y: 0, duration: 0.9, ease: "power3.out" },
+            );
+
+            gsap.fromTo(
+              refs.titleWords.current,
+              { opacity: 0, y: 16 },
+              {
+                opacity: 1,
+                y: 0,
+                duration: 0.7,
+                stagger: 0.04,
+                ease: "power3.out",
+              },
+            );
+
+            gsap.fromTo(
+              refs.tags.current,
+              { opacity: 0, y: 12 },
+              {
+                opacity: 1,
+                y: 0,
+                duration: 0.6,
+                stagger: 0.05,
+                ease: "back.out(1.4)",
+              },
+            );
+
+            gsap.fromTo(
+              refs.cube.current,
+              { rotateY: -12 + i * 8, rotateX: -6, scale: 0.9 },
+              {
+                rotateY: -8,
+                rotateX: -6,
+                scale: 1,
+                duration: 1,
+                ease: "power3.out",
+              },
+            );
+          },
+        });
+      });
+    }, rootRef);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <section className="py-24 px-6 md:px-12 lg:px-20 bg-background/80 overflow-hidden">
-      <div className="max-w-7xl mx-auto space-y-32">
+    <section
+      ref={rootRef}
+      className="relative px-6 md:px-12 lg:px-20 py-24 bg-background/80"
+    >
+      <div className="max-w-7xl mx-auto space-y-24 lg:space-y-32">
         {disciplines.map((d, i) => {
           const cubeFirst = i % 2 === 0;
+          const refs = cubeRefs.current[i];
           return (
-            <div key={d.title.join(" ")} className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center reveal">
+            <div
+              key={d.title.join(" ")}
+              ref={(el) => {
+                if (refs) refs.row.current = el;
+              }}
+              className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center"
+            >
               <div
                 className={`lg:col-span-6 flex justify-center py-10 ${cubeFirst ? "order-2 lg:order-1" : "order-2"}`}
               >
-                <Cube3D faces={d.faces} />
+                <Cube3D ref={assignCubeRef(i)} faces={d.faces} />
               </div>
 
               <div className={`lg:col-span-6 ${cubeFirst ? "order-1 lg:order-2" : "order-1"}`}>
                 <h2
                   className={`text-4xl sm:text-6xl font-black tracking-tight uppercase leading-none mb-6 transition-colors ${toneTitle[d.tone]}`}
                 >
-                  {d.title[0]}
-                  <br />
-                  {d.title[1]}
+                  {d.title.map((line, lineIdx) => (
+                    <span key={lineIdx} className="block">
+                      {line.split(/\s+/).map((w, wIdx) => (
+                        <span
+                          key={`${lineIdx}-${wIdx}`}
+                          ref={(el) => {
+                            if (el && refs) refs.titleWords.current.push(el);
+                          }}
+                          className="inline-block mr-[0.22em] last:mr-0"
+                        >
+                          {w}
+                        </span>
+                      ))}
+                      {lineIdx === 0 && <br />}
+                    </span>
+                  ))}
                 </h2>
-                <p className="text-sm sm:text-base text-muted-foreground leading-relaxed max-w-xl mb-8">{d.body}</p>
+                <p className="text-sm sm:text-base text-muted-foreground leading-relaxed max-w-xl mb-8">
+                  {d.body}
+                </p>
                 <div className="flex flex-wrap gap-2.5">
                   {d.tags.map((tag) => (
                     <span
                       key={tag}
-                      className={`px-4 py-2 rounded-xl bg-surface border border-border text-xs font-mono font-semibold uppercase text-foreground/85 hover:scale-105 transition cursor-default ${toneTag[d.tone]}`}
+                      ref={(el) => {
+                        if (el && refs) refs.tags.current.push(el);
+                      }}
+                      className={`px-4 py-2 rounded-xl bg-surface border border-border text-xs font-mono font-semibold uppercase text-foreground/85 hover:scale-105 cursor-default transition ${toneTag[d.tone]}`}
                     >
                       {tag}
                     </span>
