@@ -1,9 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
-/**
- * Real-time pendulum rigid body: gravity + angular spring + damping, draggable with
- * inertia so the card keeps swinging after release. Renders a lanyard cord to the pivot.
- */
 export function PendulumCard({ children, cordHeight = 90 }: { children: ReactNode; cordHeight?: number }) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
@@ -16,91 +12,131 @@ export function PendulumCard({ children, cordHeight = 90 }: { children: ReactNod
     if (!card || !wrap) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    let angle = 0.22;
-    let velocity = 0.08;
+    let angle = 0;
+    let angularVel = 0;
+    let introAngularVel = 6.6;
+    let introGate = false;
+    let attractAngle = 0;
+    let targetAttract = 0;
     let pointerAngle: number | null = null;
-    let attractAngle = 0; // target angle from global cursor position
-    let followMode = false; // becomes true once the intro swing settles
-    let calm = 0;
-    const startedAt = performance.now();
-    let last = performance.now();
+    let lastCursorMoveAt = -Infinity;
+    let lastX = window.innerWidth / 2;
+    let startedAt = performance.now();
+    let lastTime = performance.now();
     let raf = 0;
+    let forcedSafety = false;
+
+    const INTRO_DELAY_MS = 2800;
+    const SAFETY_FORCE_REST_MS = 5000;
+    const GRAVITY = 11.5;
+    const DAMPING_PER_SEC = 1.15;
+    const MAX_ANGLE = 0.55;
+    const ATTRACT_MAX = 0.42;
+    const FOLLOW_SMOOTH = 6.2;
+    const RETURN_SMOOTH = 2.0;
+    const CURSOR_IDLE_MS = 520;
+    const DRAG_KP = 26;
+    const DRAG_KD = 10;
+    const WRAP_WIDTH = 320;
+
+    const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 
     const step = (now: number) => {
-      const dt = Math.min((now - last) / 1000, 0.05);
-      last = now;
+      const dt = Math.min((now - lastTime) / 1000, 0.05);
+      lastTime = now;
+      const elapsed = now - startedAt;
+
+      if (!introGate && elapsed >= INTRO_DELAY_MS) {
+        introGate = true;
+        angularVel = introAngularVel;
+      }
+      if (!forcedSafety && elapsed >= SAFETY_FORCE_REST_MS && !introGate) {
+        forcedSafety = true;
+        introGate = true;
+        angularVel = 0;
+        angle = 0;
+      }
+
+      const idleMs = now - lastCursorMoveAt;
+      if (idleMs > CURSOR_IDLE_MS) {
+        targetAttract = 0;
+        attractAngle += (targetAttract - attractAngle) * Math.min(1, RETURN_SMOOTH * dt);
+      } else {
+        attractAngle += (targetAttract - attractAngle) * Math.min(1, FOLLOW_SMOOTH * dt);
+      }
 
       if (pointerAngle !== null) {
-        const next = pointerAngle;
-        velocity = (next - angle) / Math.max(dt, 0.001);
-        angle = next;
-        calm = 0;
-      } else if (!followMode) {
-        const accel = -7.5 * Math.sin(angle) - velocity * 0.55;
-        velocity += accel * dt;
-        angle += velocity * dt;
-        if (Math.abs(angle) < 0.08 && Math.abs(velocity) < 0.42) {
-          calm += dt;
-          if (calm > 0.3) followMode = true;
-        } else {
-          calm = 0;
-        }
-        // Never leave cursor-following locked out while the card is off-screen.
-        if (now - startedAt > 4200) followMode = true;
-      } else {
-        // settled: strongly swings toward the cursor with visible overshoot
-        const accel = (attractAngle - angle) * 30 - velocity * 2.7;
-        velocity += accel * dt;
-        angle += velocity * dt;
+        const accel = (pointerAngle - angle) * DRAG_KP - angularVel * DRAG_KD;
+        angularVel += accel * dt;
+        angle += angularVel * dt;
+      } else if (introGate) {
+        const offset = angle - attractAngle;
+        const accel = -GRAVITY * Math.sin(offset) - DAMPING_PER_SEC * angularVel;
+        angularVel += accel * dt;
+        angle += angularVel * dt;
+      }
+
+      if (angle > MAX_ANGLE) {
+        angle = MAX_ANGLE;
+        if (angularVel > 0) angularVel *= -0.38;
+      } else if (angle < -MAX_ANGLE) {
+        angle = -MAX_ANGLE;
+        if (angularVel < 0) angularVel *= -0.38;
       }
 
       const deg = (angle * 180) / Math.PI;
       card.style.transform = `rotate(${deg.toFixed(3)}deg)`;
+
       if (cordRef.current) {
-        const unit = 100 / 320;
+        const unit = 100 / WRAP_WIDTH;
         cordRef.current.setAttribute("x2", `${50 + Math.sin(angle) * cordHeight * unit}`);
         cordRef.current.setAttribute("y2", `${Math.cos(angle) * cordHeight}`);
       }
+
       raf = requestAnimationFrame(step);
     };
     raf = requestAnimationFrame(step);
-
 
     const pivot = () => {
       const r = wrap.getBoundingClientRect();
       return { x: r.left + r.width / 2, y: r.top };
     };
 
+    const computeAttract = (clientX: number) => {
+      const p = pivot();
+      const refWidth = Math.max(window.innerWidth * 0.42, 320);
+      const ndx = clamp((clientX - p.x) / refWidth, -1, 1);
+      const shaped = ndx * Math.abs(ndx) * 1.25;
+      targetAttract = shaped * ATTRACT_MAX;
+      lastCursorMoveAt = performance.now();
+    };
+
     const down = (e: PointerEvent) => {
       card.setPointerCapture(e.pointerId);
       setDragging(true);
       pointerAngle = angle;
+      lastCursorMoveAt = performance.now();
     };
     const move = (e: PointerEvent) => {
       if (pointerAngle === null) return;
       const p = pivot();
       const a = Math.atan2(e.clientX - p.x, Math.max(e.clientY - p.y, 40));
-      pointerAngle = Math.max(-1.05, Math.min(1.05, a));
+      pointerAngle = clamp(a, -MAX_ANGLE, MAX_ANGLE);
     };
     const up = () => {
       pointerAngle = null;
-      followMode = true;
       setDragging(false);
     };
 
-    // follow the cursor anywhere on the page
-    let lastCursorX = window.innerWidth / 2;
-    const globalMove = (x: number) => {
-      if (pointerAngle !== null) return;
-      lastCursorX = x;
-      const p = pivot();
-      const dx = (x - p.x) / Math.max(window.innerWidth / 2, 1);
-      attractAngle = Math.max(-1, Math.min(1, dx)) * 1.05;
-      if (performance.now() - startedAt > 1800) followMode = true;
+    const onPointerMove = (e: PointerEvent) => {
+      lastX = e.clientX;
+      computeAttract(e.clientX);
     };
-    const onPointerMove = (e: PointerEvent) => globalMove(e.clientX);
-    const onMouseMove = (e: MouseEvent) => globalMove(e.clientX);
-    const onScroll = () => globalMove(lastCursorX);
+    const onMouseMove = (e: MouseEvent) => {
+      lastX = e.clientX;
+      computeAttract(e.clientX);
+    };
+    const onScroll = () => computeAttract(lastX);
 
     card.addEventListener("pointerdown", down);
     card.addEventListener("pointermove", move);
