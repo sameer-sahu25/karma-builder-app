@@ -1,5 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useMotionValue, useSpring, useTransform } from "motion/react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 import { AnimatedText } from "@/components/motion/AnimatedText";
 import creativeTechBurst from "@/assets/creative-tech-burst.png";
@@ -12,7 +14,6 @@ const roles = [
   { title: "Systems Architect", sub: "Designing resilient platforms" },
 ];
 
-/** Open box with a cursor-driven creative burst, matching the reference interaction. */
 function OpenBox({ index }: { index: number }) {
   const mx = useMotionValue(0);
   const my = useMotionValue(0);
@@ -65,7 +66,6 @@ function OpenBox({ index }: { index: number }) {
         />
       </AnimatePresence>
 
-      {/* role pills rising out of the box */}
       <div
         className="pointer-events-none absolute left-1/2 -translate-x-1/2 bottom-28 z-20 w-full flex justify-center"
         aria-live="polite"
@@ -81,7 +81,11 @@ function OpenBox({ index }: { index: number }) {
             className="absolute inline-flex items-center gap-4 rounded-full border border-border bg-surface/85 backdrop-blur-md pl-3 pr-7 py-3 shadow-2xl"
           >
             <span className="w-11 h-11 rounded-full bg-surface-2 grid place-items-center text-accent">
-              {index % 2 === 0 ? <BoltIcon className="w-5 h-6" /> : <RobotIcon className="w-6 h-6" />}
+              {index % 2 === 0 ? (
+                <BoltIcon className="w-5 h-6" />
+              ) : (
+                <RobotIcon className="w-6 h-6" />
+              )}
             </span>
             <span className="text-left">
               <span className="block text-base font-bold tracking-tight">{role.title}</span>
@@ -91,7 +95,11 @@ function OpenBox({ index }: { index: number }) {
         </AnimatePresence>
       </div>
 
-      <motion.div className="box-3d relative z-30 mt-24" style={{ rotateX: rotX, rotateY: rotY }} aria-hidden="true">
+      <motion.div
+        className="box-3d relative z-30 mt-24"
+        style={{ rotateX: rotX, rotateY: rotY }}
+        aria-hidden="true"
+      >
         <span className="box-face box-front" />
         <span className="box-face box-back" />
         <span className="box-face box-left" />
@@ -107,21 +115,54 @@ function OpenBox({ index }: { index: number }) {
 
 export function DigitalReality() {
   const [i, setI] = useState(0);
+  const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const id = window.setInterval(() => setI((v) => (v + 1) % roles.length), 1450);
     return () => window.clearInterval(id);
   }, []);
 
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const section = sectionRef.current;
+    if (!section) return;
+
+    try {
+      gsap.registerPlugin(ScrollTrigger);
+    } catch {
+      /* ignore double registration */
+    }
+
+    const ctx = gsap.context(() => {
+      gsap.from(section, {
+        opacity: 0,
+        y: 60,
+        duration: 1,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: section,
+          start: "top 80%",
+          once: true,
+        },
+      });
+    }, section);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <section id="reality" className="relative py-28 px-6 md:px-12 lg:px-20 overflow-hidden">
+    <section
+      id="reality"
+      ref={sectionRef}
+      className="relative overflow-hidden py-16 md:py-20 px-6 md:px-12 lg:px-20"
+    >
       <div className="max-w-5xl mx-auto text-center">
         <AnimatedText
           as="h2"
           text="ARCHITECTING"
           split="chars"
           stagger={0.035}
-          className="block text-5xl sm:text-7xl md:text-8xl font-black tracking-tight "
+          className="block text-5xl sm:text-7xl md:text-8xl font-black tracking-tight"
           itemClassName="text-metallic"
         />
         <AnimatedText
@@ -132,7 +173,6 @@ export function DigitalReality() {
           stagger={0.03}
           className="block font-signature text-5xl sm:text-7xl md:text-8xl leading-tight text-foreground/90"
         />
-
         <OpenBox index={i} />
       </div>
     </section>
