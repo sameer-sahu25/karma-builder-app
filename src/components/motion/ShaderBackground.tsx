@@ -121,6 +121,8 @@ export function ShaderBackground({ className }: { className?: string }) {
     window.addEventListener("resize", resize);
 
     let raf = 0;
+    let checkTimer: number | undefined;
+    let fallbackTimer: number | undefined;
     const start = performance.now();
     const render = (now: number) => {
       mouse.x += (target.x - mouse.x) * 0.06;
@@ -133,9 +135,29 @@ export function ShaderBackground({ className }: { className?: string }) {
       gl.drawArrays(gl.TRIANGLES, 0, 3);
       raf = requestAnimationFrame(render);
     };
-    raf = requestAnimationFrame(render);
+
+    const startShader = () => {
+      if (checkTimer !== undefined) window.clearInterval(checkTimer);
+      if (fallbackTimer !== undefined) window.clearTimeout(fallbackTimer);
+      if (!raf) {
+        raf = requestAnimationFrame(render);
+      }
+    };
+
+    if (document.documentElement.dataset["preloaded"] === "true") {
+      startShader();
+    } else {
+      checkTimer = window.setInterval(() => {
+        if (document.documentElement.dataset["preloaded"] === "true") {
+          startShader();
+        }
+      }, 50);
+      fallbackTimer = window.setTimeout(startShader, 2100);
+    }
 
     return () => {
+      if (checkTimer !== undefined) window.clearInterval(checkTimer);
+      if (fallbackTimer !== undefined) window.clearTimeout(fallbackTimer);
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", resize);
       window.removeEventListener("pointermove", onMove);

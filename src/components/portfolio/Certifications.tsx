@@ -1,6 +1,6 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as React from "react";
-import { Download, ExternalLink, X } from "lucide-react";
+import { Download, ExternalLink, X, Eye, Award, CheckCircle2, FileText } from "lucide-react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -9,6 +9,13 @@ import { Magnetic } from "@/components/motion/Magnetic";
 import { Reveal } from "@/components/motion/Reveal";
 import { TiltCard } from "@/components/motion/TiltCard";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 
 type Cert = {
@@ -18,6 +25,7 @@ type Cert = {
   tag: string;
   accent: string;
   pdf?: string;
+  preview?: string;
 };
 
 const certs: Cert[] = [
@@ -28,6 +36,7 @@ const certs: Cert[] = [
     tag: "Training Badge",
     accent: "from-amber/25",
     pdf: "/certs/cert-aws-academy-ml-foundations.pdf",
+    preview: "/certs/cert-aws-academy-ml-foundations-preview.webp",
   },
   {
     title: "AWS Academy Graduate — Cloud Foundations",
@@ -36,6 +45,7 @@ const certs: Cert[] = [
     tag: "Training Badge",
     accent: "from-accent/25",
     pdf: "/certs/cert-aws-academy-cloud-foundations.pdf",
+    preview: "/certs/cert-aws-academy-cloud-foundations-preview.webp",
   },
   {
     title: "Data Analytics Essentials",
@@ -44,6 +54,7 @@ const certs: Cert[] = [
     tag: "Certificate",
     accent: "from-emerald/25",
     pdf: "/certs/cert-data-analytics-essentials.pdf",
+    preview: "/certs/cert-data-analytics-essentials-preview.webp",
   },
   {
     title: "Learn Python From Scratch",
@@ -52,6 +63,7 @@ const certs: Cert[] = [
     tag: "Certificate",
     accent: "from-accent/25",
     pdf: "/certs/cert-learn-python-from-scratch.pdf",
+    preview: "/certs/cert-learn-python-from-scratch-preview.webp",
   },
   {
     title: "Programming: Beginner to Advanced",
@@ -60,6 +72,7 @@ const certs: Cert[] = [
     tag: "Certificate",
     accent: "from-amber/25",
     pdf: "/certs/cert-programming-beginner-to-advanced.pdf",
+    preview: "/certs/cert-programming-beginner-to-advanced-preview.webp",
   },
   {
     title: "Programming Fundamentals",
@@ -68,6 +81,7 @@ const certs: Cert[] = [
     tag: "Certificate",
     accent: "from-emerald/25",
     pdf: "/certs/cert-programming-fundamentals.pdf",
+    preview: "/certs/cert-programming-fundamentals-preview.webp",
   },
   { title: "Deep Learning Specialization", issuer: "BISA AI Academy", year: "2025", tag: "Completion Badge", accent: "from-accent/25" },
   { title: "AWS Educate — Getting Started with Databases", issuer: "Amazon Web Services", year: "2025", tag: "Training Badge", accent: "from-amber/25" },
@@ -140,11 +154,42 @@ function CertCardContent({
       />
       <div
         className={cn(
-          `h-28 sm:h-32 rounded-xl bg-linear-to-br ${c.accent} to-transparent border border-border flex items-end p-3 sm:p-4 transition-all duration-500 group-hover:scale-[1.03]`,
-          hasPdf && "group-hover:shadow-lg group-hover:shadow-black/20",
+          "relative h-36 sm:h-44 rounded-xl overflow-hidden border border-border/80 bg-surface-2/70 flex items-end p-3 transition-all duration-500 group-hover:scale-[1.02]",
+          hasPdf && "group-hover:shadow-lg group-hover:shadow-black/25 group-hover:border-accent/50",
         )}
       >
-        <span className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.25em] text-foreground/80 drop-shadow-sm">
+        {c.preview ? (
+          <>
+            <img
+              src={c.preview}
+              alt={`${c.title} Certificate`}
+              loading="lazy"
+              className="absolute inset-0 w-full h-full object-cover object-top filter brightness-[0.92] contrast-[1.05] transition-all duration-500 group-hover:scale-105 group-hover:brightness-100"
+            />
+            {/* Subtle dark gradient overlay so text remains readable */}
+            <div className="absolute inset-0 bg-gradient-to-t from-background/95 via-background/25 to-transparent pointer-events-none" />
+
+            {/* Hover overlay hint */}
+            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+              <span className="px-3 py-1.5 rounded-full bg-accent text-accent-foreground font-mono text-[10px] font-bold uppercase tracking-wider shadow-xl flex items-center gap-1.5 transform translate-y-1 group-hover:translate-y-0 transition-transform duration-300">
+                <Eye className="w-3.5 h-3.5" />
+                View Certificate
+              </span>
+            </div>
+          </>
+        ) : (
+          <div className={`absolute inset-0 bg-linear-to-br ${c.accent} to-transparent flex flex-col justify-between p-3.5`}>
+            <div className="flex items-center justify-between text-muted-foreground/60">
+              <Award className="w-5 h-5 text-accent/80" />
+              <span className="font-mono text-[9px] uppercase tracking-widest text-accent/80">Verified</span>
+            </div>
+            <div>
+              <p className="font-mono text-[11px] text-foreground/90 font-bold truncate">{c.issuer}</p>
+            </div>
+          </div>
+        )}
+
+        <span className="relative z-10 font-mono text-[9px] sm:text-[10px] uppercase tracking-[0.22em] text-foreground font-semibold px-2.5 py-0.5 rounded-md bg-background/85 backdrop-blur-md border border-white/10 shadow-sm">
           {c.tag}
         </span>
       </div>
@@ -189,44 +234,75 @@ function PdfPanel({
   cert: Cert;
   onClose: () => void;
 }) {
-  if (!cert.pdf) return null;
+  if (!cert.pdf && !cert.preview) return null;
 
   const panelRef = React.useRef<HTMLDivElement | null>(null);
+  const [viewMode, setViewMode] = React.useState<"preview" | "pdf">(cert.preview ? "preview" : "pdf");
 
   React.useEffect(() => {
     const node = panelRef.current;
     if (node && typeof node.scrollIntoView === "function") {
       node.scrollIntoView({ behavior: "smooth", block: "center" });
     }
-  }, [cert.pdf]);
+  }, [cert.pdf, cert.preview]);
 
   return (
     <div
       ref={panelRef}
-      className="mt-10 w-full rounded-3xl border border-border-strong bg-surface/80 p-4 backdrop-blur-xl shadow-2xl shadow-black/30 sm:p-6"
+      className="mt-10 w-full rounded-3xl border border-border-strong bg-surface/85 p-4 backdrop-blur-xl shadow-2xl shadow-black/40 sm:p-6"
     >
-      <div className="flex items-start justify-between gap-4 rounded-2xl border border-border bg-background/60 px-4 py-3 sm:px-5 sm:py-4">
-        <div className="min-w-0 flex flex-col">
-          <h3 className="truncate text-lg font-bold tracking-tight sm:text-xl">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-2xl border border-border bg-background/70 px-4 py-3 sm:px-5 sm:py-4">
+        <div className="min-w-0 flex flex-col text-left">
+          <h3 className="truncate text-lg font-bold tracking-tight sm:text-xl text-foreground">
             {cert.title}
           </h3>
           <p className="mt-1 truncate font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground sm:text-xs">
             {cert.issuer} · {cert.tag} · {cert.year}
           </p>
         </div>
-        <div className="flex items-center gap-2 shrink-0">
-          <Button asChild size="sm" variant="outline">
-            <a href={cert.pdf} target="_blank" rel="noopener noreferrer" className="gap-1.5">
-              <ExternalLink className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">New Tab</span>
-            </a>
-          </Button>
-          <Button asChild size="sm" variant="default">
-            <a href={cert.pdf} download className="gap-1.5">
-              <Download className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">Download</span>
-            </a>
-          </Button>
+        <div className="flex items-center gap-2 shrink-0 flex-wrap">
+          {cert.preview && cert.pdf && (
+            <div className="inline-flex rounded-lg border border-border bg-surface-2 p-0.5 mr-1">
+              <button
+                type="button"
+                onClick={() => setViewMode("preview")}
+                className={cn(
+                  "px-2.5 py-1 text-xs font-mono rounded-md transition-colors",
+                  viewMode === "preview" ? "bg-accent text-accent-foreground font-bold" : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                Image Preview
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode("pdf")}
+                className={cn(
+                  "px-2.5 py-1 text-xs font-mono rounded-md transition-colors",
+                  viewMode === "pdf" ? "bg-accent text-accent-foreground font-bold" : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                PDF View
+              </button>
+            </div>
+          )}
+
+          {cert.pdf && (
+            <>
+              <Button asChild size="sm" variant="outline">
+                <a href={cert.pdf} target="_blank" rel="noopener noreferrer" className="gap-1.5">
+                  <ExternalLink className="h-3.5 w-3.5" />
+                  <span className="hidden sm:inline">New Tab</span>
+                </a>
+              </Button>
+              <Button asChild size="sm" variant="default">
+                <a href={cert.pdf} download className="gap-1.5">
+                  <Download className="h-3.5 w-3.5" />
+                  <span className="hidden sm:inline">Download</span>
+                </a>
+              </Button>
+            </>
+          )}
+
           <Button
             type="button"
             size="sm"
@@ -241,36 +317,44 @@ function PdfPanel({
         </div>
       </div>
 
-      <div className="relative mt-4 h-[70vh] min-h-[520px] w-full overflow-hidden rounded-2xl border border-border bg-muted/50 shadow-inner">
-        <object
-          data={cert.pdf}
-          type="application/pdf"
-          className="h-full w-full"
-          aria-label={`${cert.title} — PDF viewer`}
-        >
-          <iframe
-            src={cert.pdf}
-            title={cert.title}
-            className="h-full w-full border-0"
+      <div className="relative mt-4 min-h-[440px] max-h-[75vh] w-full overflow-hidden rounded-2xl border border-border bg-black/50 flex items-center justify-center p-2 sm:p-4 shadow-inner">
+        {viewMode === "preview" && cert.preview ? (
+          <img
+            src={cert.preview}
+            alt={`${cert.title} Certificate Preview`}
+            className="max-h-[70vh] w-auto max-w-full object-contain rounded-xl shadow-2xl border border-white/10"
           />
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-background/95 p-8 text-center">
-            <p className="text-sm font-semibold">Your browser cannot preview this PDF inline.</p>
-            <div className="flex flex-wrap items-center justify-center gap-2">
-              <Button asChild size="sm" variant="default">
-                <a href={cert.pdf} download className="gap-1.5">
-                  <Download className="h-3.5 w-3.5" />
-                  Download PDF
-                </a>
-              </Button>
-              <Button asChild size="sm" variant="outline">
-                <a href={cert.pdf} target="_blank" rel="noopener noreferrer" className="gap-1.5">
-                  <ExternalLink className="h-3.5 w-3.5" />
-                  Open in New Tab
-                </a>
-              </Button>
+        ) : cert.pdf ? (
+          <object
+            data={cert.pdf}
+            type="application/pdf"
+            className="h-full w-full min-h-[520px]"
+            aria-label={`${cert.title} — PDF viewer`}
+          >
+            <iframe
+              src={cert.pdf}
+              title={cert.title}
+              className="h-full w-full min-h-[520px] border-0"
+            />
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-background/95 p-8 text-center">
+              <p className="text-sm font-semibold">Your browser cannot preview this PDF inline.</p>
+              <div className="flex flex-wrap items-center justify-center gap-2">
+                <Button asChild size="sm" variant="default">
+                  <a href={cert.pdf} download className="gap-1.5">
+                    <Download className="h-3.5 w-3.5" />
+                    Download PDF
+                  </a>
+                </Button>
+                <Button asChild size="sm" variant="outline">
+                  <a href={cert.pdf} target="_blank" rel="noopener noreferrer" className="gap-1.5">
+                    <ExternalLink className="h-3.5 w-3.5" />
+                    Open in New Tab
+                  </a>
+                </Button>
+              </div>
             </div>
-          </div>
-        </object>
+          </object>
+        ) : null}
       </div>
     </div>
   );
@@ -278,6 +362,7 @@ function PdfPanel({
 
 export function Certifications() {
   const [openCert, setOpenCert] = React.useState<Cert | null>(null);
+  const [modalCert, setModalCert] = React.useState<Cert | null>(null);
   const rootRef = useRef<HTMLElement | null>(null);
   const cardRefs = useRef<HTMLDivElement[]>([]);
   const titleLineRef = useRef<SVGPathElement | null>(null);
@@ -411,31 +496,94 @@ export function Certifications() {
         <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 text-left">
           {certs.map((c, i) => (
             <TiltCard key={c.title} max={9} lift={16}>
-              {c.pdf ? (
-                <button
-                  type="button"
-                  onClick={() => setOpenCert(openCert?.pdf === c.pdf ? null : c)}
-                  aria-expanded={openCert?.pdf === c.pdf}
-                  className="block w-full text-left"
-                >
-                  <CertCardContent
-                    c={c}
-                    hasPdf
-                    isActive={openCert?.pdf === c.pdf}
-                    cardRef={(el) => { if (el) cardRefs.current[i] = el; }}
-                  />
-                </button>
-              ) : (
+              <button
+                type="button"
+                onClick={() => {
+                  setModalCert(c);
+                  if (c.pdf) setOpenCert(c);
+                }}
+                aria-label={`View certificate for ${c.title}`}
+                className="block w-full text-left cursor-pointer"
+              >
                 <CertCardContent
                   c={c}
-                  hasPdf={false}
-                  isActive={false}
+                  hasPdf={!!c.pdf || !!c.preview}
+                  isActive={openCert?.title === c.title}
                   cardRef={(el) => { if (el) cardRefs.current[i] = el; }}
                 />
-              )}
+              </button>
             </TiltCard>
           ))}
         </div>
+
+        {/* Fullscreen Interactive Lightbox Modal */}
+        <Dialog open={!!modalCert} onOpenChange={(open) => !open && setModalCert(null)}>
+          <DialogContent className="max-w-4xl w-[95vw] max-h-[92vh] overflow-y-auto p-4 sm:p-6 bg-surface/95 backdrop-blur-2xl border-border-strong rounded-3xl shadow-2xl">
+            {modalCert && (
+              <div className="text-left">
+                <DialogHeader className="mb-4">
+                  <div className="flex flex-wrap items-center gap-2 mb-1">
+                    <span className="font-mono text-[10px] uppercase tracking-[0.2em] px-2.5 py-0.5 rounded-full bg-accent/15 border border-accent/30 text-accent font-semibold">
+                      {modalCert.tag}
+                    </span>
+                    <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                      {modalCert.issuer} · {modalCert.year}
+                    </span>
+                  </div>
+                  <DialogTitle className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
+                    {modalCert.title}
+                  </DialogTitle>
+                  <DialogDescription className="sr-only">
+                    Certificate preview for {modalCert.title}
+                  </DialogDescription>
+                </DialogHeader>
+
+                {/* Full-resolution Certificate Preview */}
+                <div className="relative rounded-2xl overflow-hidden border border-border bg-black/60 shadow-2xl flex items-center justify-center p-2 sm:p-4 min-h-[320px]">
+                  {modalCert.preview ? (
+                    <img
+                      src={modalCert.preview}
+                      alt={modalCert.title}
+                      className="max-h-[65vh] w-auto max-w-full object-contain rounded-xl shadow-lg border border-white/10"
+                    />
+                  ) : (
+                    <div className="py-16 text-center space-y-3">
+                      <Award className="w-14 h-14 text-accent mx-auto" />
+                      <p className="text-base font-semibold text-foreground">{modalCert.title}</p>
+                      <p className="text-xs font-mono text-muted-foreground">{modalCert.issuer} · Verified Credential</p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Modal Footer Controls */}
+                <div className="mt-5 flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-border">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-emerald" />
+                    <span className="text-xs font-mono text-muted-foreground">Officially Verified Credential</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {modalCert.pdf && (
+                      <>
+                        <Button asChild size="sm" variant="outline">
+                          <a href={modalCert.pdf} target="_blank" rel="noopener noreferrer" className="gap-1.5">
+                            <ExternalLink className="h-3.5 w-3.5" />
+                            <span>Open in New Tab</span>
+                          </a>
+                        </Button>
+                        <Button asChild size="sm" variant="default">
+                          <a href={modalCert.pdf} download className="gap-1.5">
+                            <Download className="h-3.5 w-3.5" />
+                            <span>Download PDF</span>
+                          </a>
+                        </Button>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
 
         {openCert?.pdf && (
           <div className="mt-8">
