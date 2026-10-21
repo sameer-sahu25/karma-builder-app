@@ -103,7 +103,7 @@ export function SiteFooter() {
           <a ref={(el) => registerIcon(el, 2)} href="https://instagram.com" target="_blank" rel="noreferrer" className={dock} title="Instagram" aria-label="Instagram">
             <InstagramIcon className="w-4 h-4" />
           </a>
-          <a ref={(el) => registerIcon(el, 3)} href="#projects" className={dock} title="Gallery" aria-label="Gallery">
+          <a ref={(el) => registerIcon(el, 3)} href="/#projects" className={dock} title="Gallery" aria-label="Gallery">
             <CameraIcon className="w-4 h-4" />
           </a>
           <a ref={(el) => registerIcon(el, 4)} href="https://reddit.com" target="_blank" rel="noreferrer" className={dock} title="Reddit" aria-label="Reddit">

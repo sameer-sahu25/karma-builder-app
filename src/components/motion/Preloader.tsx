@@ -26,6 +26,7 @@ export function Preloader({ onDone }: { onDone?: () => void }) {
     const finish = () => {
       if (finishCalledRef.current) return;
       finishCalledRef.current = true;
+      window.__preloaderDone = true;
       setOpen(false);
       try {
         document.documentElement.dataset["preloaded"] = "true";

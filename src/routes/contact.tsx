@@ -56,7 +56,7 @@ function ContactPage() {
 
       <SiteNav />
 
-      <main id="contact" className="max-w-6xl mx-auto px-5 sm:px-8 pt-20 pb-10">
+      <main id="contact-main" className="max-w-6xl mx-auto px-5 sm:px-8 pt-20 pb-10">
         <Reveal kind="blur">
           <p className="font-mono text-[10px] tracking-[0.3em] uppercase text-accent">Get in touch</p>
           <h1 className="mt-4 text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight leading-[1.05]">

@@ -50,19 +50,42 @@ export function SmoothScroll() {
     document.addEventListener("visibilitychange", onVisible);
 
     const onAnchor = (e: MouseEvent) => {
-      const target = (e.target as HTMLElement | null)?.closest?.('a[href^="#"]') as HTMLAnchorElement | null;
+      const target = (e.target as HTMLElement | null)?.closest?.('a[href^="#"], a[href^="/#"]') as HTMLAnchorElement | null;
       if (!target) return;
-      const id = target.getAttribute("href");
-      if (!id || id === "#") return;
-      const el = document.querySelector(id);
+      const rawHref = target.getAttribute("href");
+      if (!rawHref || rawHref === "#" || rawHref === "/#") return;
+      const hash = rawHref.startsWith("/#") ? rawHref.slice(2) : rawHref.slice(1);
+      if (!hash) return;
+      const el = document.getElementById(hash);
       if (!el) return;
       e.preventDefault();
       lenis.scrollTo(el as HTMLElement, { offset: -90, duration: 1.4 });
     };
     document.addEventListener("click", onAnchor);
 
+    const scrollToHash = () => {
+      if (typeof window === "undefined" || !window.location.hash) return;
+      const hash = window.location.hash.slice(1);
+      const el = document.getElementById(hash);
+      if (el) {
+        lenis.scrollTo(el as HTMLElement, { offset: -90, duration: 1.2 });
+      }
+    };
+
+    if (typeof window !== "undefined" && window.location.hash) {
+      window.setTimeout(scrollToHash, 300);
+      window.setTimeout(scrollToHash, 900);
+      window.setTimeout(scrollToHash, 2100);
+    }
+
+    const onHashChange = () => {
+      scrollToHash();
+    };
+    window.addEventListener("hashchange", onHashChange);
+
     return () => {
       document.removeEventListener("click", onAnchor);
+      window.removeEventListener("hashchange", onHashChange);
       document.removeEventListener("visibilitychange", onVisible);
       window.removeEventListener("load", refresh);
       window.clearTimeout(refreshId);

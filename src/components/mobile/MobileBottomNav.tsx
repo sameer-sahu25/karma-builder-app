@@ -112,6 +112,13 @@ export function MobileBottomNav({
           if (anchor) {
             ev.preventDefault();
             anchor.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
+          } else {
+            ev.preventDefault();
+            if (tab.id === "home") {
+              window.location.href = "/";
+            } else {
+              window.location.href = `/${tab.href}`;
+            }
           }
         }
         onTabChange?.(tab.id);

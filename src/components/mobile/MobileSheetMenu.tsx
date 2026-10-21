@@ -13,6 +13,7 @@ import {
   FileIcon,
   GlobeIcon,
   GridIcon,
+  HomeIcon,
   MoonIcon,
   RobotIcon,
   SunIcon,
@@ -97,17 +98,18 @@ export function MobileSheetMenu({
 
   const handleAction = useCallback(
     (action: SheetAction) => {
-      if (action.href) {
-        const el = document.querySelector<HTMLElement>(action.href);
-        if (el) {
-          onOpenChange(false);
-          window.setTimeout(() => {
-            el.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
-          }, isAndroid ? 180 : 280);
-          return;
-        }
-      }
       onOpenChange(false);
+      const targetId = action.id === "stack" ? "tech-stack" : action.id;
+      const el = document.getElementById(targetId);
+      if (el) {
+        window.setTimeout(() => {
+          el.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
+        }, isAndroid ? 180 : 280);
+      } else {
+        window.setTimeout(() => {
+          window.location.href = `/#${targetId}`;
+        }, 150);
+      }
     },
     [onOpenChange, reduceMotion, isAndroid],
   );
@@ -249,13 +251,45 @@ export function MobileSheetMenu({
                     <p className="px-1 font-mono text-[10px] uppercase tracking-[0.24em] text-subtle">
                       Quick settings
                     </p>
-                    <div className="mt-3 grid grid-cols-3 gap-2.5">
+                    <div className="mt-3 grid grid-cols-4 gap-2">
+                      <a
+                        href="/"
+                        onClick={() => onOpenChange(false)}
+                        className={cn(
+                          "flex flex-col items-center gap-1.5 rounded-2xl border border-border bg-surface/80 px-1.5 py-3",
+                          "transition hover:border-border-strong hover:bg-muted/60 active:scale-95 text-center",
+                        )}
+                      >
+                        <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-surface-2 border border-border text-muted-foreground">
+                          <HomeIcon className="h-4 w-4" />
+                        </span>
+                        <span className="font-mono text-[9.5px] uppercase tracking-[0.14em] text-subtle">
+                          Home
+                        </span>
+                      </a>
+
+                      <a
+                        href="/contact"
+                        onClick={() => onOpenChange(false)}
+                        className={cn(
+                          "flex flex-col items-center gap-1.5 rounded-2xl border border-border bg-surface/80 px-1.5 py-3",
+                          "transition hover:border-border-strong hover:bg-muted/60 active:scale-95 text-center",
+                        )}
+                      >
+                        <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-surface-2 border border-border text-muted-foreground">
+                          <GlobeIcon className="h-4 w-4" />
+                        </span>
+                        <span className="font-mono text-[9.5px] uppercase tracking-[0.14em] text-subtle">
+                          Contact
+                        </span>
+                      </a>
+
                       <button
                         type="button"
                         onClick={onToggleTheme}
                         className={cn(
-                          "flex flex-col items-center gap-1.5 rounded-2xl border border-border bg-surface/80 px-2 py-3",
-                          "transition hover:border-border-strong hover:bg-muted/60 active:scale-95",
+                          "flex flex-col items-center gap-1.5 rounded-2xl border border-border bg-surface/80 px-1.5 py-3",
+                          "transition hover:border-border-strong hover:bg-muted/60 active:scale-95 text-center",
                         )}
                       >
                         <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-surface-2 border border-border text-muted-foreground">
@@ -265,7 +299,7 @@ export function MobileSheetMenu({
                             <MoonIcon className="h-4 w-4" />
                           )}
                         </span>
-                        <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-subtle">
+                        <span className="font-mono text-[9.5px] uppercase tracking-[0.14em] text-subtle">
                           {theme === "dark" ? "Light" : "Dark"}
                         </span>
                       </button>
@@ -274,32 +308,17 @@ export function MobileSheetMenu({
                         type="button"
                         onClick={onToggleFullscreen}
                         className={cn(
-                          "flex flex-col items-center gap-1.5 rounded-2xl border border-border bg-surface/80 px-2 py-3",
-                          "transition hover:border-border-strong hover:bg-muted/60 active:scale-95",
+                          "flex flex-col items-center gap-1.5 rounded-2xl border border-border bg-surface/80 px-1.5 py-3",
+                          "transition hover:border-border-strong hover:bg-muted/60 active:scale-95 text-center",
                         )}
                       >
                         <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-surface-2 border border-border text-muted-foreground">
                           <ExpandIcon className="h-4 w-4" />
                         </span>
-                        <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-subtle">
-                          Fullscreen
+                        <span className="font-mono text-[9.5px] uppercase tracking-[0.14em] text-subtle truncate">
+                          Screen
                         </span>
                       </button>
-
-                      <a
-                        href="/contact"
-                        className={cn(
-                          "flex flex-col items-center gap-1.5 rounded-2xl border border-border bg-surface/80 px-2 py-3",
-                          "transition hover:border-border-strong hover:bg-muted/60 active:scale-95",
-                        )}
-                      >
-                        <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-surface-2 border border-border text-muted-foreground">
-                          <GlobeIcon className="h-4 w-4" />
-                        </span>
-                        <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-subtle">
-                          Contact
-                        </span>
-                      </a>
                     </div>
                   </div>
 
